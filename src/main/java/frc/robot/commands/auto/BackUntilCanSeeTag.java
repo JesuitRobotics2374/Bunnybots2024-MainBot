@@ -11,11 +11,10 @@ import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
 import frc.robot.Constants;
 
-
 /**
  * DriveDynamic - Moves the robot forward by a specified distance.
  */
-public class DriveAndSeek extends Command {
+public class BackUntilCanSeeTag extends Command {
 
     private final CommandSwerveDrivetrain drivetrain;
     private final VisionSubsystem visionSubsystem;
@@ -63,25 +62,25 @@ public class DriveAndSeek extends Command {
     @Override
     public void execute() {
         // Get the current robot position in meters
-        
+
         drivetrain.setControl(
-                new SwerveRequest.RobotCentric().withVelocityZ(-0.4));
+                new SwerveRequest.RobotCentric().withVelocityX(-0.4));
 
         // return !visionSubsystem.canSeeTag(tag_id);
 
-        System.out.println(th);
-
-        // TODO: Compare vision pose components to specific constants ("cant see tag" pose)
+        // TODO: Compare vision pose components to specific constants ("cant see tag"
+        // pose)
         // System.out.println(field.getObject("Vision").getPose());
         // System.out.println(field.getObject("Vision").getPose().getTranslation().getX());
         // System.out.println(field.getObject("Vision").getPose().getTranslation().getY());
 
         // if (visionSubsystem.canSeeTag(tag_id)) {
-        //     fdist = th;
-        //     done = true;
+        // fdist = th;
+        // done = true;
         // }
 
-        
+        // 9.0, 4.199999999...
+
     }
 
     @Override
@@ -96,7 +95,6 @@ public class DriveAndSeek extends Command {
         drivetrain.setControl(new SwerveRequest.SwerveDriveBrake());
         System.out.println("Command " + (interrupted ? "interrupted" : "completed") + ". Final robot position: "
                 + drivetrain.getState().Pose.getTranslation().getX() + " meters.");
-        System.out.println("Final: " + visionSubsystem.getTagDistanceAndAngle(tag_id).getDistance());
     }
 
     public double getGoal() {

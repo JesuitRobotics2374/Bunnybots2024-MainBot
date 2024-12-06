@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-import frc.robot.commands.ApproachTagTeleop;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.VisionSubsystem.DistanceAndAngle;
 import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
@@ -37,7 +36,6 @@ public class RobotContainer {
 
     private double MaxSpeed = 6; // 6 meters per second desired top speed
     private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
-    private final ChassisSubsystem m_ChassisSubsystem;
     // private final VisionSubsystem m_VisionSubsystem;
     private final CommandSwerveDrivetrain m_DrivetrainSubsystem = TunerConstants.DriveTrain;
 
@@ -49,7 +47,6 @@ public class RobotContainer {
     // private final VacummSubystem m_VacummSubystem;
     private final VisionSubsystem m_VisionSubsystem;
     private final ArmSubsystem m_ArmSubsystem;
-    private final ApproachTagTeleop m_ApproachTagTeleop;
     // private final ClimberSubsystem m_ClimberSubsystem;
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
@@ -72,7 +69,6 @@ public class RobotContainer {
      */
     public RobotContainer() {
 
-        m_ChassisSubsystem = new ChassisSubsystem();
         m_ArmSubsystem = new ArmSubsystem();
 
         // m_VacummSubystem = new VacummSubystem();
@@ -88,7 +84,6 @@ public class RobotContainer {
         // m_ClimberSubsystem = new ClimberSubsystem();
         registerAutoCommands();
         System.out.println("container created");
-        this.m_ApproachTagTeleop = null;
         autoChooser = AutoBuilder.buildAutoChooser();
         configureShuffleBoard();
         resetDrive();
@@ -190,15 +185,18 @@ public class RobotContainer {
         // Modes
         tab.addBoolean("Slow Mode", () -> isSlow()).withPosition(2, 0).withSize(2, 1);
         tab.addBoolean("Roll Mode", () -> isRoll()).withPosition(5, 0).withSize(2, 1);
-        
+
         // Robot
         tab.addDouble("Robot X", () -> m_DrivetrainSubsystem.getState().Pose.getX()).withPosition(0, 0).withSize(1, 1);
         tab.addDouble("Robot Y", () -> m_DrivetrainSubsystem.getState().Pose.getY()).withPosition(0, 1).withSize(1, 1);
-        tab.addDouble("Robot R", () -> m_DrivetrainSubsystem.getState().Pose.getRotation().getDegrees()).withPosition(0, 2).withSize(1, 1);
+        tab.addDouble("Robot R", () -> m_DrivetrainSubsystem.getState().Pose.getRotation().getDegrees())
+                .withPosition(0, 2).withSize(1, 1);
 
         // Arm
-        tab.addDouble("Arm Goal", () -> m_ArmSubsystem.getController().getSetpoint().position).withPosition(1, 0).withSize(1, 1);
-        tab.addDouble("Arm Actual", () -> m_ArmSubsystem.getEncoder().getAbsolutePosition().getValueAsDouble()).withPosition(1, 1).withSize(1, 1);
+        tab.addDouble("Arm Goal", () -> m_ArmSubsystem.getController().getSetpoint().position).withPosition(1, 0)
+                .withSize(1, 1);
+        tab.addDouble("Arm Actual", () -> m_ArmSubsystem.getEncoder().getAbsolutePosition().getValueAsDouble())
+                .withPosition(1, 1).withSize(1, 1);
 
         // Vac
         tab.addString("Active Vacuum", () -> m_VacuumMaster.getTargetVacAsString()).withPosition(7, 0).withSize(1, 1);
@@ -225,12 +223,12 @@ public class RobotContainer {
         m_driveController.povUp().whileTrue(m_ArmSubsystem.runOnce(() -> m_ArmSubsystem.raise()));
         m_driveController.povDown().whileTrue(m_ArmSubsystem.runOnce(() -> m_ArmSubsystem.lower()));
 
-        m_driveController.a().onTrue(
-                m_VisionSubsystem.runOnce(() -> {
-                    System.out.println("started test case");
-                    m_VisionSubsystem.doStaticAlign(m_DrivetrainSubsystem,
-                            SELECTED_AUTO_TAG);
-                }));
+        // m_driveController.a().onTrue(
+        // m_VisionSubsystem.runOnce(() -> {
+        // System.out.println("started test case");
+        // m_VisionSubsystem.doStaticAlign(m_DrivetrainSubsystem,
+        // SELECTED_AUTO_TAG);
+        // }));
 
         m_driveController.b().onTrue(
                 m_VisionSubsystem.runOnce(() -> {
@@ -370,15 +368,6 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
-    }
-
-    /**
-     * Accessor to the Chassis Subsystem
-     * 
-     * @return The Chassis Subsystem
-     */
-    public ChassisSubsystem getChassisSubsystem() {
-        return m_ChassisSubsystem;
     }
 
     /**

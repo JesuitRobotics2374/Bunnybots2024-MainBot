@@ -45,13 +45,6 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Robot;
 
-import frc.robot.subsystems.ArmSubsystem;
-
-import frc.robot.subsystems.ChassisSubsystem;
-import frc.robot.subsystems.FalconVacummSubsystem;
-import frc.robot.subsystems.ManipulatorSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
-
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
  * subsystem
@@ -142,6 +135,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     @Override
     public void periodic() {
+
+        System.out.println("x: " + field.getObject("Vision").getPose().getTranslation().getX());
+        System.out.println("y: " + field.getObject("Vision").getPose().getTranslation().getY());
+
         double[] array = pose.getDoubleArray(new double[0]);
         boolean flag = isTargetValid(array);
         // System.out.println(array.length);
@@ -254,39 +251,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                 : new Translation2d(0, Constants.RED_SPEAKER_Y))
                 .getDistance(getState().Pose.getTranslation());
         return offset;
-    }
-
-    public boolean goToNote() {
-        Transform2d notePose = ChassisSubsystem.getInstance().getNearestNotePose();
-        if (notePose == null || notePose.getTranslation().getNorm() > 5) {
-            return false;
-        }
-        // Create a list of bezier points from poses. Each pose represents one waypoint.
-        // The rotation component of the pose should be the direction of travel. Do not
-        // use holonomic rotation.
-        List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-                getState().Pose,
-                new Pose2d(getState().Pose.transformBy(notePose).getTranslation(), getState().Pose.getRotation()
-                        .plus(Rotation2d.fromRadians(Math.tan(notePose.getY() / notePose.getX())))));
-
-        // Create the path using the bezier points created above
-        PathPlannerPath path = new PathPlannerPath(
-                bezierPoints,
-                new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a
-                                                                         // differential drivetrain, the angular
-                                                                         // constraints have no effect.
-                new GoalEndState(0.0, getState().Pose.getRotation()
-                        .plus(Rotation2d.fromRadians(Math.tan(notePose.getY() / notePose.getX())))) // Goal end state.
-                                                                                                    // You can set a
-                                                                                                    // holonomic
-                                                                                                    // rotation
-        // here. If using a differential drivetrain, the
-        // rotation will have no effect.
-        );
-
-        // Prevent the path from being flipped if the coordinates are already correct
-        path.preventFlipping = true;
-        return true;
     }
 
     public Field2d getField() {

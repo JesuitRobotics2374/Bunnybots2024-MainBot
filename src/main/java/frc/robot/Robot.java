@@ -40,16 +40,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        // lights
-        if (!m_robotContainer.getChassisSubsystem().isTestRobot()) {
-        }
         CommandScheduler.getInstance().cancelAll();
     }
 
     @Override
     public void disabledExit() {
-        if (!m_robotContainer.getChassisSubsystem().isTestRobot()) {
-        }
         m_robotContainer.getArmSubsystem().resetGoal();
     }
 
@@ -85,14 +80,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        // if (team == null) {
-        // }
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-        // m_robotContainer.alignPigeonVision();
-        // schedule the autonomous command (example)
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.schedule();
-        }
+
+        m_robotContainer.runAutonomousCommand();
+
     }
 
     @Override

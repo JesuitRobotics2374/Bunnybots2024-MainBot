@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.commands.ApproachTagAuto;
-
-import frc.robot.commands.ApproachTagTeleop;
 import frc.robot.commands.auto.DriveAndSeek;
 import frc.robot.commands.auto.DriveDynamic;
 import frc.robot.commands.auto.DriveDynamicY;
@@ -119,13 +117,6 @@ public class VisionSubsystem extends SubsystemBase {
         // ApproachTag approach = new ApproachTag(ds, this, tag_id);
         // }
         ApproachTagAuto a = new ApproachTagAuto(ds, instance, tag_id, vac, arm);
-        a.schedule();
-    }
-
-    public void approachTeleop(CommandSwerveDrivetrain m_DrivetrainSubsystem,
-            int testTargetTag, VacummSubystem m_VacummSubystem, ArmSubsystem m_ArmSubsystem) {
-        ApproachTagTeleop a = new ApproachTagTeleop(m_DrivetrainSubsystem, instance, testTargetTag, m_VacummSubystem,
-                m_ArmSubsystem);
         a.schedule();
     }
 
