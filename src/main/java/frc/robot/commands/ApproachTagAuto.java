@@ -10,14 +10,14 @@ import frc.robot.commands.auto.DriveDynamic;
 import frc.robot.commands.auto.DriveDynamicY;
 import frc.robot.commands.auto.OriginToStatic;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.VacummSubystem;
+import frc.robot.subsystems.VacuumSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
 
 public class ApproachTagAuto extends InstantCommand {
 
     public ApproachTagAuto(CommandSwerveDrivetrain drivetrain, VisionSubsystem visionSubsystem, int tag_id,
-            VacummSubystem vac, ArmSubsystem arm) {
+            VacuumSubsystem vac, ArmSubsystem arm) {
 
         // DistanceAndAngle d = visionSubsystem.getTagDistanceAndAngle(tag_id);
 

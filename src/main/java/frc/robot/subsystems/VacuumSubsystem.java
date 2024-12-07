@@ -5,13 +5,13 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class VacummSubystem extends SubsystemBase {
+public class VacuumSubsystem extends SubsystemBase {
 
     private CANSparkMax vacumm;
 
     private String state = "Stopped";
 
-    public VacummSubystem(int id) {
+    public VacuumSubsystem(int id) {
         vacumm = new CANSparkMax(id, MotorType.kBrushless);
         System.out.println("Created VAC: " + vacumm.getDeviceId());
         this.stop();

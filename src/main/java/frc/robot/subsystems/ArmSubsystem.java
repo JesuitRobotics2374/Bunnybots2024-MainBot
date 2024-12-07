@@ -91,64 +91,6 @@ public class ArmSubsystem extends SubsystemBase {
         armController.setGoal(goal);
     }
 
-    public double angleCalculator(double distance) {
-        double top = Math.PI / 2;
-        double bottom = 0.0;
-
-        for (int cycle = 0; cycle < 50; cycle++) {
-            double angle = (top + bottom) / 2;
-            double deltaDistance = distance - Constants.armLength * Math.cos(angle);
-            double deltaHeight = Constants.deltaHeight - Constants.armLength * Math.sin(angle);
-
-            double t = deltaDistance / Constants.launchVelocity * Math.cos(angle);
-            double y = deltaDistance * Constants.launchVelocity * Math.sin(angle) - 4.903325 * t * t;
-
-            if (y > deltaHeight) {
-                top = angle;
-            } else if (y < deltaHeight) {
-                bottom = angle;
-            } else {
-                break;
-            }
-        }
-
-        return (top + bottom) / 2 + Constants.armAngleOffset;
-    }
-
-    public double myAngleCalculator(double distance) {
-        double top = Math.PI / 2;
-        double bottom = Math.PI;
-
-        for (int cycle = 0; cycle < 13; cycle++) {
-            double angle = (top + bottom) / 2;
-            double deltaDistance = distance - Constants.armLength * Math.cos(angle);
-            double deltaHeight = Constants.deltaHeight - Constants.armLength * Math.sin(angle);
-
-            // double vX = Constants.launchVelocity * Math.cos(angle -
-            // Constants.armAngleOffset);
-            double t = deltaDistance * (deltaDistance * 0.05 + 1)
-                    / (Constants.launchVelocity * Math.cos(angle - Constants.armAngleOffset));
-            double y = Constants.launchVelocity * Math.sin(angle - Constants.armAngleOffset) * t - 4.903325 * t * t;
-            // System.out.println(angle);
-            if (y > deltaHeight) {
-                bottom = angle;
-            } else if (y < deltaHeight) {
-                top = angle;
-            } else {
-                break;
-            }
-        }
-
-        return Math.toDegrees((Math.PI / 2) - ((top + bottom) / 2)) + manualOffset;
-    }
-
-    public void shoot() {
-        // System.out.println(CommandSwerveDrivetrain.getInstance().getDistanceToSpeaker());
-        double angle = myAngleCalculator(CommandSwerveDrivetrain.getInstance().getDistanceToSpeaker());
-        setGoal(angle);
-        // System.out.println(angle / 360);
-    }
-
     public void increaseOffset() {
         manualOffset -= 0.5;
     }

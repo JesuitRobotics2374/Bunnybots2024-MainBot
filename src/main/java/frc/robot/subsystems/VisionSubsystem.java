@@ -109,13 +109,11 @@ public class VisionSubsystem extends SubsystemBase {
         System.out.println(offset);
     }
 
-    public void approachDynamically(CommandSwerveDrivetrain ds, int tag_id, VacummSubystem vac, ArmSubsystem arm) {
-        DistanceAndAngle d = getTagDistanceAndAngle(tag_id);
-        // if (d.getDistance() != -1.0 && d.getTheta() != -1.0) {
-        // System.out.println("THETA: " + d.getTheta());
-        // AlignDynamic align = new AlignDynamic(ds, d.getTheta());
-        // ApproachTag approach = new ApproachTag(ds, this, tag_id);
-        // }
+    public void approachDynamically(CommandSwerveDrivetrain ds, int tag_id, VacuumSubsystem vac, ArmSubsystem arm) {
+        if (tag_id == -1) {
+            System.out.println("----------- UNSET AUTO! SKIPPING -----------");
+            return;
+        }
         ApproachTagAuto a = new ApproachTagAuto(ds, instance, tag_id, vac, arm);
         a.schedule();
     }

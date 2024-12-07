@@ -3,56 +3,46 @@ package frc.robot;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.VisionSubsystem.DistanceAndAngle;
 import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DrivetrainSubsystem.TunerConstants;
 import frc.robot.util.AutonomousChooser;
-
-/**
- * TODO: add rotation control to the Operator Controller
- */
 
 public class RobotContainer {
 
     private final SendableChooser<Command> commandChooser = new SendableChooser<>();
 
-    private double MaxSpeed = 6; // 6 meters per second desired top speed
-    private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
-    // private final VisionSubsystem m_VisionSubsystem;
+    private double MaxSpeed = Constants.ROBOT_MAX_SPEED;
+    private double MaxAngularRate = Constants.ROBOT_MAX_ROTATIONAL_RATE;
+
     private final CommandSwerveDrivetrain m_DrivetrainSubsystem = TunerConstants.DriveTrain;
 
     private final VacuumMaster m_VacuumMaster;
-    private final VacummSubystem m_VacummSubystem1;
-    private final VacummSubystem m_VacummSubystem2;
-    private final VacummSubystem m_VacummSubystem3;
-
-    // private final VacummSubystem m_VacummSubystem;
+    private final VacuumSubsystem m_VacuumSubsystem1;
+    private final VacuumSubsystem m_VacuumSubsystem2;
+    private final VacuumSubsystem m_VacuumSubsystem3;
     private final VisionSubsystem m_VisionSubsystem;
     private final ArmSubsystem m_ArmSubsystem;
-    // private final ClimberSubsystem m_ClimberSubsystem;
+
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                      // driving in open loop
     private final AutonomousChooser autonomousChooser = new AutonomousChooser();
-    private final SendableChooser<Command> autoChooser;
 
     private final CommandXboxController m_driveController = new CommandXboxController(
             Constants.CONTROLLER_USB_PORT_DRIVER);
@@ -64,30 +54,26 @@ public class RobotContainer {
 
     private int SELECTED_AUTO_TAG = -1;
 
-    /**
-     * The robot container. Need I say more?
-     */
     public RobotContainer() {
 
         m_ArmSubsystem = new ArmSubsystem();
 
-        // m_VacummSubystem = new VacummSubystem();
+        // m_VacuumSubsystem = new VacuumSubsystem();
 
-        m_VacummSubystem1 = new VacummSubystem(Constants.VAC_1_ID);
-        m_VacummSubystem2 = new VacummSubystem(Constants.VAC_2_ID);
-        m_VacummSubystem3 = new VacummSubystem(Constants.VAC_3_ID);
-        m_VacuumMaster = new VacuumMaster(m_VacummSubystem1, m_VacummSubystem2,
-                m_VacummSubystem3);
+        m_VacuumSubsystem1 = new VacuumSubsystem(Constants.VAC_1_ID);
+        m_VacuumSubsystem2 = new VacuumSubsystem(Constants.VAC_2_ID);
+        m_VacuumSubsystem3 = new VacuumSubsystem(Constants.VAC_3_ID);
+        m_VacuumMaster = new VacuumMaster(m_VacuumSubsystem1, m_VacuumSubsystem2,
+                m_VacuumSubsystem3);
 
         m_VisionSubsystem = new VisionSubsystem();
 
         // m_ClimberSubsystem = new ClimberSubsystem();
         registerAutoCommands();
         System.out.println("container created");
-        autoChooser = AutoBuilder.buildAutoChooser();
         configureShuffleBoard();
-        resetDrive();
-        configureButtonBindings();
+        //resetDrive();
+        //configureButtonBindings();
 
         commandChooser.addOption("Tag 1", new InstantCommand(() -> setAutoTag(1)));
         commandChooser.addOption("Tag 2", new InstantCommand(() -> setAutoTag(2)));
@@ -139,9 +125,14 @@ public class RobotContainer {
                 // with
                 // negative X (left)
                 ));
+        // Java
         m_DrivetrainSubsystem.seedFieldRelative();
         if (Utils.isSimulation()) {
             m_DrivetrainSubsystem.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
+        } else {
+            if (m_DrivetrainSubsystem.getState().Pose == null) {
+                m_DrivetrainSubsystem.getState().Pose = new Pose2d(new Translation2d(), new Rotation2d());
+            }
         }
     }
 
@@ -179,6 +170,9 @@ public class RobotContainer {
 
         ShuffleboardTab tab = Shuffleboard.getTab(Constants.DRIVER_READOUT_TAB_NAME);
 
+        // New List Layout
+        ShuffleboardContainer pos = tab.getLayout("Position", "List Layout").withPosition(0, 0).withSize(1, 2);
+
         // Field
         tab.add(m_DrivetrainSubsystem.getField()).withPosition(2, 1).withSize(5, 3);
 
@@ -186,12 +180,13 @@ public class RobotContainer {
         tab.addBoolean("Slow Mode", () -> isSlow()).withPosition(2, 0).withSize(2, 1);
         tab.addBoolean("Roll Mode", () -> isRoll()).withPosition(5, 0).withSize(2, 1);
 
-        // Robot
-        tab.addDouble("Robot X", () -> m_DrivetrainSubsystem.getState().Pose.getX()).withPosition(0, 0).withSize(1, 1);
-        tab.addDouble("Robot Y", () -> m_DrivetrainSubsystem.getState().Pose.getY()).withPosition(0, 1).withSize(1, 1);
-        tab.addDouble("Robot R", () -> m_DrivetrainSubsystem.getState().Pose.getRotation().getDegrees())
-                .withPosition(0, 2).withSize(1, 1);
-
+        // Robot (Reverse order for list layout)
+        //pos.addDouble("Robot R", () -> m_DrivetrainSubsystem.getState().Pose.getRotation().getDegrees()).withPosition(0, 2);
+        //pos.addDouble("Robot Y", () -> m_DrivetrainSubsystem.getState().Pose.getY()).withPosition(0, 1);
+        //pos.addDouble("Robot X", () -> m_DrivetrainSubsystem.getState().Pose.getX()).withPosition(0, 0);
+        
+        //tab.addDouble("Speed", () -> m_DrivetrainSubsystem.getRobotOverallVelocity()).withPosition(0, 2).withSize(2, 2).withWidget("Simple Dial");
+    
         // Arm
         tab.addDouble("Arm Goal", () -> m_ArmSubsystem.getController().getSetpoint().position).withPosition(1, 0)
                 .withSize(1, 1);
@@ -200,9 +195,9 @@ public class RobotContainer {
 
         // Vac
         tab.addString("Active Vacuum", () -> m_VacuumMaster.getTargetVacAsString()).withPosition(7, 0).withSize(1, 1);
-        tab.addString("Vac 1 Status", () -> m_VacummSubystem1.getState()).withPosition(7, 1).withSize(1, 1);
-        tab.addString("Vac 2 Status", () -> m_VacummSubystem2.getState()).withPosition(7, 2).withSize(1, 1);
-        tab.addString("Vac 3 Status", () -> m_VacummSubystem3.getState()).withPosition(7, 3).withSize(1, 1);
+        tab.addString("Vac 1 Status", () -> m_VacuumSubsystem1.getState()).withPosition(7, 1).withSize(1, 1);
+        tab.addString("Vac 2 Status", () -> m_VacuumSubsystem2.getState()).withPosition(7, 2).withSize(1, 1);
+        tab.addString("Vac 3 Status", () -> m_VacuumSubsystem3.getState()).withPosition(7, 3).withSize(1, 1);
 
         tab.add("Auto Tag", commandChooser).withPosition(4, 0).withSize(1, 1);
     }
@@ -235,7 +230,7 @@ public class RobotContainer {
                     System.out.println("started finder case");
                     m_VisionSubsystem.approachDynamically(m_DrivetrainSubsystem,
                             SELECTED_AUTO_TAG,
-                            m_VacummSubystem1, m_ArmSubsystem);
+                            m_VacuumSubsystem1, m_ArmSubsystem);
                 }));
 
         // m_driveController.y().onTrue(
@@ -263,15 +258,15 @@ public class RobotContainer {
         // m_driveController.b().onTrue(
         // m_VisionSubsystem.runOnce(() -> {
         // m_VisionSubsystem.approachTeleop(m_DrivetrainSubsystem,
-        // SELECTED_AUTO_TAG, m_VacummSubystem2, m_ArmSubsystem);
+        // SELECTED_AUTO_TAG, m_VacuumSubsystem2, m_ArmSubsystem);
         // }));
 
         // OPERATOR CONTROLLER
 
-        // m_operatorController.y().onTrue(m_VacummSubystem1.runOnce(() ->
-        // m_VacummSubystem1.intakeFull()));
-        // m_operatorController.x().onTrue(m_VacummSubystem1.runOnce(() ->
-        // m_VacummSubystem1.stop()));
+        // m_operatorController.y().onTrue(m_VacuumSubsystem1.runOnce(() ->
+        // m_VacuumSubsystem1.intakeFull()));
+        // m_operatorController.x().onTrue(m_VacuumSubsystem1.runOnce(() ->
+        // m_VacuumSubsystem1.stop()));
 
         m_operatorController.y().onTrue(m_VacuumMaster.runOnce(() -> m_VacuumMaster.intakeFull()));
         m_operatorController.b().onTrue(m_VacuumMaster.runOnce(() -> m_VacuumMaster.intakePartial()));
@@ -366,10 +361,6 @@ public class RobotContainer {
         return autonomousChooser;
     }
 
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
-    }
-
     /**
      * Accessor to the DriveTrain Subsystem
      * 
@@ -385,5 +376,11 @@ public class RobotContainer {
 
     public void alignPigeonVision() {
         m_DrivetrainSubsystem.alignToVision();
+    }
+
+    public void runAutonomousCommand() {
+        m_VisionSubsystem.approachDynamically(m_DrivetrainSubsystem,
+                SELECTED_AUTO_TAG,
+                m_VacuumSubsystem1, m_ArmSubsystem);
     }
 }

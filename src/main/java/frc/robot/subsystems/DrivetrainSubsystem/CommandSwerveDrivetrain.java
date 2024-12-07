@@ -11,9 +11,6 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -22,7 +19,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -136,8 +132,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     @Override
     public void periodic() {
 
-        System.out.println("x: " + field.getObject("Vision").getPose().getTranslation().getX());
-        System.out.println("y: " + field.getObject("Vision").getPose().getTranslation().getY());
+        // System.out.println("x: " + field.getObject("Vision").getPose().getTranslation().getX());
+        // System.out.println("y: " + field.getObject("Vision").getPose().getTranslation().getY());
 
         double[] array = pose.getDoubleArray(new double[0]);
         boolean flag = isTargetValid(array);
@@ -244,16 +240,25 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         return instance;
     }
 
-    public double getDistanceToSpeaker() {
-        /* swap > if wrong target (also in AlignToSpeakerComand.java) */
-        double offset = (getState().Pose.getX() > 8.4
-                ? new Translation2d(Constants.RED_SPEAKER_X, Constants.RED_SPEAKER_Y)
-                : new Translation2d(0, Constants.RED_SPEAKER_Y))
-                .getDistance(getState().Pose.getTranslation());
-        return offset;
-    }
-
     public Field2d getField() {
         return field;
+    }
+
+    public double getRobotVelocityX() {
+        return getCurrentRobotChassisSpeeds().vxMetersPerSecond;
+    }
+
+    public double getRobotVelocityY() {
+        return getCurrentRobotChassisSpeeds().vyMetersPerSecond;
+    }
+
+    public double getRobotAngularVelocity() {
+        return getCurrentRobotChassisSpeeds().omegaRadiansPerSecond;
+    }
+
+    public double getRobotOverallVelocity() {
+        double vx = getRobotVelocityX();
+        double vy = getRobotVelocityY();
+        return Math.sqrt(vx * vx + vy * vy);
     }
 }

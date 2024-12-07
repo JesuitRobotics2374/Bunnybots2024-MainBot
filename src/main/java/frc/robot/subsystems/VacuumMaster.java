@@ -3,19 +3,20 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VacuumMaster extends SubsystemBase {
 
-    private VacummSubystem vac1;
-    private VacummSubystem vac2;
-    private VacummSubystem vac3;
+    private VacuumSubsystem vac1;
+    private VacuumSubsystem vac2;
+    private VacuumSubsystem vac3;
 
-    private VacummSubystem targetVac;
+    private VacuumSubsystem targetVac;
 
     private boolean allVacs;
 
-    public VacuumMaster(VacummSubystem vac1, VacummSubystem vac2, VacummSubystem vac3) {
+    public VacuumMaster(VacuumSubsystem vac1, VacuumSubsystem vac2, VacuumSubsystem vac3) {
         this.vac1 = vac1;
         this.vac2 = vac2;
         this.vac3 = vac3;
@@ -65,23 +66,25 @@ public class VacuumMaster extends SubsystemBase {
 
     public String getTargetVacAsString() {
         if (allVacs) {
-            return "ALL VACUUMS";
+            return "ALL";
         } else
         if (targetVac == vac1) {
             return "Black";
         } else if (targetVac == vac2) {
             return "Green";
-        } else {
+        } else if (targetVac == vac3) {
             return "White";
+        } else {
+            return "ERROR";
         }
     }
 
-    public VacummSubystem getTargetVac() {
+    public VacuumSubsystem getTargetVac() {
         return targetVac;
     }
 
-    public VacummSubystem[] getVacs() {
-        return new VacummSubystem[] { vac1, vac2, vac3 };
+    public VacuumSubsystem[] getVacs() {
+        return new VacuumSubsystem[] { vac1, vac2, vac3 };
     }
 
     public void setTargetVac(int vac) {
