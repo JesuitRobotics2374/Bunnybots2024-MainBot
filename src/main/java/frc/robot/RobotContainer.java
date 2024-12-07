@@ -39,6 +39,8 @@ public class RobotContainer {
     private final VisionSubsystem m_VisionSubsystem;
     private final ArmSubsystem m_ArmSubsystem;
 
+    private Command t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12;
+
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                      // driving in open loop
@@ -72,26 +74,64 @@ public class RobotContainer {
         registerAutoCommands();
         System.out.println("container created");
         configureShuffleBoard();
-        //resetDrive();
-        //configureButtonBindings();
+        resetDrive();
+        configureButtonBindings();
 
-        commandChooser.addOption("Tag 1", new InstantCommand(() -> setAutoTag(1)));
-        commandChooser.addOption("Tag 2", new InstantCommand(() -> setAutoTag(2)));
-        commandChooser.addOption("Tag 3", new InstantCommand(() -> setAutoTag(3)));
-        commandChooser.addOption("Tag 4", new InstantCommand(() -> setAutoTag(4)));
-        commandChooser.addOption("Tag 5", new InstantCommand(() -> setAutoTag(5)));
-        commandChooser.addOption("Tag 6", new InstantCommand(() -> setAutoTag(6)));
-        commandChooser.addOption("Tag 7", new InstantCommand(() -> setAutoTag(7)));
-        commandChooser.addOption("Tag 8", new InstantCommand(() -> setAutoTag(8)));
-        commandChooser.addOption("Tag 9", new InstantCommand(() -> setAutoTag(9)));
-        commandChooser.addOption("Tag 10", new InstantCommand(() -> setAutoTag(10)));
-        commandChooser.addOption("Tag 11", new InstantCommand(() -> setAutoTag(11)));
-        commandChooser.addOption("Tag 12", new InstantCommand(() -> setAutoTag(12)));
+        t1 = new InstantCommand(() -> {
+        });
+        t1.setName("1");
+        t2 = new InstantCommand(() -> {
+        });
+        t2.setName("2");
+        t3 = new InstantCommand(() -> {
+        });
+        t3.setName("3");
+        t4 = new InstantCommand(() -> {
+        });
+        t4.setName("4");
+        t5 = new InstantCommand(() -> {
+        });
+        t5.setName("5");
+        t6 = new InstantCommand(() -> {
+        });
+        t6.setName("6");
+        t7 = new InstantCommand(() -> {
+        });
+        t7.setName("7");
+        t8 = new InstantCommand(() -> {
+        });
+        t8.setName("8");
+        t9 = new InstantCommand(() -> {
+        });
+        t9.setName("9");
+        t10 = new InstantCommand(() -> {
+        });
+        t10.setName("10");
+        t11 = new InstantCommand(() -> {
+        });
+        t11.setName("11");
+        t12 = new InstantCommand(() -> {
+        });
+        t12.setName("12");
+
+        commandChooser.addOption("Tag 1", t1);
+        commandChooser.addOption("Tag 2", t2);
+        commandChooser.addOption("Tag 3", t3);
+        commandChooser.addOption("Tag 4", t4);
+        commandChooser.addOption("Tag 5", t5);
+        commandChooser.addOption("Tag 6", t6);
+        commandChooser.addOption("Tag 7", t7);
+        commandChooser.addOption("Tag 8", t8);
+        commandChooser.addOption("Tag 9", t9);
+        commandChooser.addOption("Tag 10", t10);
+        commandChooser.addOption("Tag 11", t11);
+        commandChooser.addOption("Tag 12", t12);
 
     }
 
     private void setAutoTag(int tag) {
-        SELECTED_AUTO_TAG = tag;
+        System.out.println("PICKED TAG FOR AUTO: " + tag);
+        this.SELECTED_AUTO_TAG = tag;
     }
 
     void runSelectedCommand(boolean run) {
@@ -181,12 +221,14 @@ public class RobotContainer {
         tab.addBoolean("Roll Mode", () -> isRoll()).withPosition(5, 0).withSize(2, 1);
 
         // Robot (Reverse order for list layout)
-        //pos.addDouble("Robot R", () -> m_DrivetrainSubsystem.getState().Pose.getRotation().getDegrees()).withPosition(0, 2);
-        //pos.addDouble("Robot Y", () -> m_DrivetrainSubsystem.getState().Pose.getY()).withPosition(0, 1);
-        //pos.addDouble("Robot X", () -> m_DrivetrainSubsystem.getState().Pose.getX()).withPosition(0, 0);
-        
-        //tab.addDouble("Speed", () -> m_DrivetrainSubsystem.getRobotOverallVelocity()).withPosition(0, 2).withSize(2, 2).withWidget("Simple Dial");
-    
+        pos.addDouble("Robot R", () -> m_DrivetrainSubsystem.getState().Pose.getRotation().getDegrees()).withPosition(0,
+                2);
+        pos.addDouble("Robot Y", () -> m_DrivetrainSubsystem.getState().Pose.getY()).withPosition(0, 1);
+        pos.addDouble("Robot X", () -> m_DrivetrainSubsystem.getState().Pose.getX()).withPosition(0, 0);
+
+        tab.addDouble("Speed", () -> m_DrivetrainSubsystem.getRobotOverallVelocity()).withPosition(0, 2).withSize(2, 2)
+                .withWidget("Simple Dial");
+
         // Arm
         tab.addDouble("Arm Goal", () -> m_ArmSubsystem.getController().getSetpoint().position).withPosition(1, 0)
                 .withSize(1, 1);
@@ -229,8 +271,8 @@ public class RobotContainer {
                 m_VisionSubsystem.runOnce(() -> {
                     System.out.println("started finder case");
                     m_VisionSubsystem.approachDynamically(m_DrivetrainSubsystem,
-                            SELECTED_AUTO_TAG,
-                            m_VacuumSubsystem1, m_ArmSubsystem);
+                            7,
+                            m_VacuumMaster, m_ArmSubsystem);
                 }));
 
         // m_driveController.y().onTrue(
@@ -379,8 +421,16 @@ public class RobotContainer {
     }
 
     public void runAutonomousCommand() {
+        System.out.println("ran receiver");
+        Command sel = commandChooser.getSelected();
+        System.out.println("------- " + sel.getName());
+        int tagToNav = -1;
+        try {
+            tagToNav = Integer.parseInt(sel.getName());
+        } catch (Exception e) {
+        }
         m_VisionSubsystem.approachDynamically(m_DrivetrainSubsystem,
-                SELECTED_AUTO_TAG,
-                m_VacuumSubsystem1, m_ArmSubsystem);
+                tagToNav,
+                m_VacuumMaster, m_ArmSubsystem);
     }
 }

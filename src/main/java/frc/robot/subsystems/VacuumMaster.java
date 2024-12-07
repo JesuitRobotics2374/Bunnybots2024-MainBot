@@ -21,7 +21,7 @@ public class VacuumMaster extends SubsystemBase {
         this.vac2 = vac2;
         this.vac3 = vac3;
         targetVac = vac1;
-        allVacs = false;
+        allVacs = true;
     }
 
     public void intakeFull() {
@@ -67,8 +67,7 @@ public class VacuumMaster extends SubsystemBase {
     public String getTargetVacAsString() {
         if (allVacs) {
             return "ALL";
-        } else
-        if (targetVac == vac1) {
+        } else if (targetVac == vac1) {
             return "Black";
         } else if (targetVac == vac2) {
             return "Green";

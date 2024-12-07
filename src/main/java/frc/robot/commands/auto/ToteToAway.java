@@ -16,7 +16,7 @@ import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
 /**
  * DriveDynamic - Moves the robot forward by a specified distance.
  */
-public class OriginToStatic extends Command {
+public class ToteToAway extends Command {
 
     private final SwerveRequest.FieldCentric driveRequest = new SwerveRequest.FieldCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -58,33 +58,22 @@ public class OriginToStatic extends Command {
      * @param relativeDistanceMeters The desired distance to move forward (in
      *                               meters)
      */
-    public OriginToStatic(CommandSwerveDrivetrain drivetrain, VisionSubsystem visionSubsystem, int tag_id) {
+    public ToteToAway(CommandSwerveDrivetrain drivetrain, VisionSubsystem visionSubsystem, int tag_id) {
         this.drivetrain = drivetrain;
         this.visionSubsystem = visionSubsystem;
         this.tag_id = tag_id;
 
-        if (contains(Constants.A_GROUP_MEMBERS, tag_id)) {
-            this.static_x = Constants.A_GROUP_X;
-            this.static_y = Constants.A_GROUP_Y;
-            this.static_r = Constants.ALL_GROUPS_ROTATION;
-        } else if (contains(Constants.B_GROUP_MEMBERS, tag_id)) {
-            this.static_x = Constants.B_GROUP_X;
-            this.static_y = Constants.B_GROUP_Y;
-            this.static_r = Constants.ALL_GROUPS_ROTATION;
-        } else if (contains(Constants.C_GROUP_MEMBERS, tag_id)) {
-            this.static_x = Constants.C_GROUP_X;
-            this.static_y = Constants.C_GROUP_Y;
-            this.static_r = Constants.ALL_GROUPS_ROTATION + 180.0;
-        } else if (contains(Constants.D_GROUP_MEMBERS, tag_id)) {
-            this.static_x = Constants.D_GROUP_X;
-            this.static_y = Constants.D_GROUP_Y;
-            this.static_r = Constants.ALL_GROUPS_ROTATION + 180.0;
+        if (contains(Constants.B_GROUP_MEMBERS, tag_id) || contains(Constants.C_GROUP_MEMBERS, tag_id)) { // Blue
+            this.static_x = Constants.BLUE_AWAY_X;
+            this.static_y = Constants.BLUE_AWAY_Y;
+        } else if (contains(Constants.A_GROUP_MEMBERS, tag_id) || contains(Constants.D_GROUP_MEMBERS, tag_id)) { // Red
+            this.static_x = Constants.RED_AWAY_X;
+            this.static_y = Constants.RED_AWAY_Y;
         } else {
             throw new IllegalArgumentException("Invalid tag_id: " + tag_id);
         }
         System.out.println("x: " + static_x);
         System.out.println("y: " + static_y);
-        System.out.println("r: " + static_r);
 
         // this.relativeDistanceMeters =
         // visionSubsystem.getTagDistanceAndAngle(3).getDistanceMeters() - 0.1;
@@ -122,8 +111,6 @@ public class OriginToStatic extends Command {
         System.out.println("Goal: X " + static_x + " Y " + static_y);
         System.out.println(" Now: X " + robotPosition.getX() + " Y " +
                 robotPosition.getY());
-        System.out.println(
-                "Rotation: " + currentRotation + " Goal: " + static_r + " Diff: " + (currentRotation - static_r));
         System.out.println(doneMoving + " " + doneRotating);
 
         // TODO: Check for rotation and translation completenes separately
@@ -131,10 +118,6 @@ public class OriginToStatic extends Command {
         if (distanceToTarget < 0.3) {
             doneMoving = true;
             System.out.println("Done moving.");
-        }
-        if (Math.abs(currentRotation - static_r) < 1.0) {
-            doneRotating = true;
-            System.out.println("Done rotating.");
         }
 
         double velocityX = 0;
@@ -154,32 +137,19 @@ public class OriginToStatic extends Command {
             System.out.println(" VEL: X " + velocityX + " Y " + velocityY);
         }
 
-        if (!doneRotating) {
-            // Calculate the rotational rate
-            double rotationError = static_r - currentRotation;
-            double RESign = rotationError / Math.abs(rotationError);
-            rotationalRate = rotationError * 0.025 + (RESign * 0.8); // Scale to desired rotational speed and add a
-                                                                     // constant speed to prevent dipping under
-                                                                     // deadband
-        }
-
         System.out.println("RR: " + rotationalRate);
 
         if (!doneMoving) {
             drivetrain.setControl(
                     driveRequest.withVelocityX(-velocityX).withVelocityY(-velocityY)
                             .withRotationalRate(-rotationalRate));
-        } else if (!doneRotating) {
-            System.out.println("Sending Rotate: " + -rotationalRate);
-            drivetrain.setControl(
-                    driveRequest.withRotationalRate(-rotationalRate));
         }
 
     }
 
     @Override
     public boolean isFinished() {
-        return doneMoving && doneRotating;
+        return doneMoving;
     }
 
     @Override

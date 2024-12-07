@@ -35,7 +35,7 @@ public class VacuumSubsystem extends SubsystemBase {
     }
 
     public void outtake() {
-        vacumm.set(-0.75);
+        vacumm.set(-0.5);
         state = "Outtake";
     }
 

@@ -11,11 +11,23 @@ import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
 import frc.robot.Constants;
 
-
 /**
  * DriveDynamic - Moves the robot forward by a specified distance.
  */
 public class DriveAndSeek extends Command {
+
+    // Method to check if an array contains a specific integer
+    private static boolean contains(int[] array, int target) {
+        // Iterate through each element in the array
+        for (int num : array) {
+            // If the current element equals the target, return true
+            if (num == target) {
+                return true;
+            }
+        }
+        // If the target is not found, return false
+        return false;
+    }
 
     private final CommandSwerveDrivetrain drivetrain;
     private final VisionSubsystem visionSubsystem;
@@ -32,6 +44,8 @@ public class DriveAndSeek extends Command {
     private double fdist;
 
     private boolean done;
+
+    private double quadrantSign = 1;
 
     /**
      * DriveDynamic Constructor
@@ -60,6 +74,10 @@ public class DriveAndSeek extends Command {
     @Override
     public void initialize() {
         done = false;
+
+        if (contains(Constants.B_GROUP_MEMBERS, tag_id) || contains(Constants.D_GROUP_MEMBERS, tag_id)) {
+            quadrantSign = -1;
+        }
     }
 
     @Override
@@ -72,7 +90,7 @@ public class DriveAndSeek extends Command {
         double signum = Math.abs(th) / th;
 
         drivetrain.setControl(
-                new SwerveRequest.RobotCentric().withVelocityY(1.6));
+                new SwerveRequest.RobotCentric().withVelocityY(1.6 * quadrantSign));
 
         // return !visionSubsystem.canSeeTag(tag_id);
 

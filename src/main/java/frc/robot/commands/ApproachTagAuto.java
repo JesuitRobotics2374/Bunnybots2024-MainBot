@@ -9,7 +9,9 @@ import frc.robot.commands.auto.DriveAndSeek;
 import frc.robot.commands.auto.DriveDynamic;
 import frc.robot.commands.auto.DriveDynamicY;
 import frc.robot.commands.auto.OriginToStatic;
+import frc.robot.commands.auto.ToteToAway;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.VacuumMaster;
 import frc.robot.subsystems.VacuumSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
@@ -17,7 +19,7 @@ import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
 public class ApproachTagAuto extends InstantCommand {
 
     public ApproachTagAuto(CommandSwerveDrivetrain drivetrain, VisionSubsystem visionSubsystem, int tag_id,
-            VacuumSubsystem vac, ArmSubsystem arm) {
+            VacuumMaster vac, ArmSubsystem arm) {
 
         // DistanceAndAngle d = visionSubsystem.getTagDistanceAndAngle(tag_id);
 
@@ -34,9 +36,9 @@ public class ApproachTagAuto extends InstantCommand {
         Command drive = new DriveDynamic(drivetrain, visionSubsystem, tag_id, 1.4, 1.5);
         Command squareUpClose = new DriveDynamicY(drivetrain, visionSubsystem, tag_id, 0.3, 0.01);
         Command lower = new InstantCommand(() -> {
-            arm.setGoal(-0.2 * 360); // Adjust
+            arm.setGoal(-0.12 * 360); // Adjust
         });
-        Command driveClose = new DriveDynamic(drivetrain, visionSubsystem, tag_id, 0.2, 0.3);
+        Command driveClose = new DriveDynamic(drivetrain, visionSubsystem, tag_id, 0.7, 0.3);
         Command outtake = new InstantCommand(() -> {
             vac.outtake();
         });
@@ -44,9 +46,11 @@ public class ApproachTagAuto extends InstantCommand {
         Command stop = new InstantCommand(() -> {
             vac.stop();
         });
+        Command leaveTimer = new WaitCommand(1.5);
+        Command staticLeave = new ToteToAway(drivetrain, visionSubsystem, tag_id);
 
         SequentialCommandGroup approach = new SequentialCommandGroup(intake, blind, align, staticNav, seek,
-                squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop);
+                squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop, leaveTimer, staticLeave);
 
         approach.schedule();
 

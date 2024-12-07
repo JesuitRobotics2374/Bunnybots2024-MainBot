@@ -91,6 +91,12 @@ public class DriveDynamic extends Command {
 
     @Override
     public void execute() {
+
+        if (!visionSubsystem.canSeeTag(tag_id)) {
+            done = true;
+            return;
+        }
+
         // Get the current robot position in meters
 
         double gap = 0; /// TODO: Move this magic number to constants.java and name

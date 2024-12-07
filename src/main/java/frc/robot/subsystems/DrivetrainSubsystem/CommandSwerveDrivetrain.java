@@ -132,8 +132,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     @Override
     public void periodic() {
 
-        // System.out.println("x: " + field.getObject("Vision").getPose().getTranslation().getX());
-        // System.out.println("y: " + field.getObject("Vision").getPose().getTranslation().getY());
+        // System.out.println("x: " +
+        // field.getObject("Vision").getPose().getTranslation().getX());
+        // System.out.println("y: " +
+        // field.getObject("Vision").getPose().getTranslation().getY());
 
         double[] array = pose.getDoubleArray(new double[0]);
         boolean flag = isTargetValid(array);
@@ -259,6 +261,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     public double getRobotOverallVelocity() {
         double vx = getRobotVelocityX();
         double vy = getRobotVelocityY();
-        return Math.sqrt(vx * vx + vy * vy);
+        return Math.sqrt(vx * vx + vy * vy) * 22;
     }
 }

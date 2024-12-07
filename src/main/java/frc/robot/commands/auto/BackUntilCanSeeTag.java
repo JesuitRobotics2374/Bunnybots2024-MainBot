@@ -81,6 +81,18 @@ public class BackUntilCanSeeTag extends Command {
 
         // 9.0, 4.199999999...
 
+        double visionX = drivetrain.getField().getObject("Vision").getPose().getTranslation().getX();
+        double visionY = drivetrain.getField().getObject("Vision").getPose().getTranslation().getY();
+
+        if (Math.round(visionX * 10.0) / 10.0 == 9.0 && Math.round(visionY * 10.0) / 10.0 == 4.2) {
+            System.out.println("No vision yet! Moving back.");
+        } else {
+            System.out.println("Can see tag!");
+            System.out.println("VX: " + Math.round(visionX * 10.0) / 10.0);
+            System.out.println("VY: " + Math.round(visionY * 10.0) / 10.0);
+            done = true;
+        }
+
     }
 
     @Override

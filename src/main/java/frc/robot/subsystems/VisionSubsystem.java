@@ -109,7 +109,7 @@ public class VisionSubsystem extends SubsystemBase {
         System.out.println(offset);
     }
 
-    public void approachDynamically(CommandSwerveDrivetrain ds, int tag_id, VacuumSubsystem vac, ArmSubsystem arm) {
+    public void approachDynamically(CommandSwerveDrivetrain ds, int tag_id, VacuumMaster vac, ArmSubsystem arm) {
         if (tag_id == -1) {
             System.out.println("----------- UNSET AUTO! SKIPPING -----------");
             return;

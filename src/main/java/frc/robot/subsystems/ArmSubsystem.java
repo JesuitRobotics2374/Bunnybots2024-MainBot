@@ -70,7 +70,9 @@ public class ArmSubsystem extends SubsystemBase {
         return armController.atGoal();
     }
 
-    public void raise() {
+    // Flipped lower and raise since vacs on other side
+
+    public void lower() {
         if (goal < Constants.FORWARD_SOFT_STOP) {
             goal += 0.01;
             armController.setGoal(goal);
@@ -78,7 +80,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     }
 
-    public void lower() {
+    public void raise() {
         if (goal > Constants.BACKWARD_SOFT_STOP) {
             goal -= .01;
             armController.setGoal(goal);

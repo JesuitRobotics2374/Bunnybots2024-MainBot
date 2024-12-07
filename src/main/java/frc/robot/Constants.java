@@ -28,7 +28,7 @@ public class Constants {
     public static final int LEFT_ARM_MOTOR_ID = 7;
     public static final int ARM_ENCODER_ID = 25;
     public static final double FORWARD_SOFT_STOP = 0.15;
-    public static final double BACKWARD_SOFT_STOP = -0.265;
+    public static final double BACKWARD_SOFT_STOP = -0.255;
     public static final double FEED_FORWARD_VOLTAGE = 0.3;
 
     public static final double ARM_PID_P = 4.0;
@@ -44,16 +44,19 @@ public class Constants {
     public static final double A_GROUP_Y = 0;
 
     public static final int[] B_GROUP_MEMBERS = { 4, 5, 6 };
-    public static final double B_GROUP_X = 0;
-    public static final double B_GROUP_Y = 0;
+    public static final double B_GROUP_X = 6.703;
+    public static final double B_GROUP_Y = 1.613;
 
     public static final int[] C_GROUP_MEMBERS = { 7, 8, 9 };
-    public static final double C_GROUP_X = 6.95;
-    public static final double C_GROUP_Y = 5.50;
+    public static final double C_GROUP_X = 6.703;
+    public static final double C_GROUP_Y = 5.853;
 
     public static final int[] D_GROUP_MEMBERS = { 10, 11, 12 };
     public static final double D_GROUP_X = 0;
     public static final double D_GROUP_Y = 0;
+
+    public static final double BLUE_AWAY_X = 1.352;
+    public static final double BLUE_AWAY_Y = 4.135;
 
     // Vacuum Subsystem
 
