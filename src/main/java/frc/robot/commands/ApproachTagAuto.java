@@ -19,10 +19,11 @@ import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
 public class ApproachTagAuto extends InstantCommand {
 
     public ApproachTagAuto(CommandSwerveDrivetrain drivetrain, VisionSubsystem visionSubsystem, int tag_id,
-            VacuumMaster vac, ArmSubsystem arm) {
+            VacuumMaster vac, ArmSubsystem arm, boolean away, boolean wait) {
 
         // DistanceAndAngle d = visionSubsystem.getTagDistanceAndAngle(tag_id);
 
+        Command startTimer = new WaitCommand(5);
         Command intake = new InstantCommand(() -> {
             vac.intakeFull();
         });
@@ -49,8 +50,19 @@ public class ApproachTagAuto extends InstantCommand {
         Command leaveTimer = new WaitCommand(1.5);
         Command staticLeave = new ToteToAway(drivetrain, visionSubsystem, tag_id);
 
-        SequentialCommandGroup approach = new SequentialCommandGroup(intake, blind, align, staticNav, seek,
-                squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop, leaveTimer, staticLeave);
+        SequentialCommandGroup approach;
+
+        if (away) {
+            approach = new SequentialCommandGroup(intake, blind, align, staticNav, seek,
+                    squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop, leaveTimer, staticLeave);
+        } else if (wait) {
+            approach = new SequentialCommandGroup(startTimer, intake, blind, align, staticNav,
+                    seek,
+                    squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop);
+        } else {
+            approach = new SequentialCommandGroup(intake, blind, align, staticNav, seek,
+                    squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop);
+        }
 
         approach.schedule();
 

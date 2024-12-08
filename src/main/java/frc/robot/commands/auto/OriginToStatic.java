@@ -148,8 +148,8 @@ public class OriginToStatic extends Command {
 
             // Normalize the velocities
             double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            velocityX = (deltaX / magnitude) * 0.5; // Scale to desired speed
-            velocityY = (deltaY / magnitude) * 0.5; // Scale to desired speed
+            velocityX = (deltaX / magnitude) * 0.75; // Scale to desired speed
+            velocityY = (deltaY / magnitude) * 0.75; // Scale to desired speed
 
             System.out.println(" VEL: X " + velocityX + " Y " + velocityY);
         }

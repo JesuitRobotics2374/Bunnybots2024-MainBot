@@ -68,11 +68,11 @@ public class VacuumMaster extends SubsystemBase {
         if (allVacs) {
             return "ALL";
         } else if (targetVac == vac1) {
-            return "Black";
-        } else if (targetVac == vac2) {
             return "Green";
-        } else if (targetVac == vac3) {
+        } else if (targetVac == vac2) {
             return "White";
+        } else if (targetVac == vac3) {
+            return "Black";
         } else {
             return "ERROR";
         }

@@ -26,6 +26,7 @@ import frc.robot.util.AutonomousChooser;
 public class RobotContainer {
 
     private final SendableChooser<Command> commandChooser = new SendableChooser<>();
+    private final SendableChooser<Command> autoType = new SendableChooser<>();
 
     private double MaxSpeed = Constants.ROBOT_MAX_SPEED;
     private double MaxAngularRate = Constants.ROBOT_MAX_ROTATIONAL_RATE;
@@ -40,11 +41,11 @@ public class RobotContainer {
     private final ArmSubsystem m_ArmSubsystem;
 
     private Command t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12;
+    private Command regular, away, wait;
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                      // driving in open loop
-    private final AutonomousChooser autonomousChooser = new AutonomousChooser();
 
     private final CommandXboxController m_driveController = new CommandXboxController(
             Constants.CONTROLLER_USB_PORT_DRIVER);
@@ -114,6 +115,16 @@ public class RobotContainer {
         });
         t12.setName("12");
 
+        regular = new InstantCommand(() -> {
+        });
+        regular.setName("regular");
+        away = new InstantCommand(() -> {
+        });
+        away.setName("away");
+        wait = new InstantCommand(() -> {
+        });
+        wait.setName("wait");
+
         commandChooser.addOption("Tag 1", t1);
         commandChooser.addOption("Tag 2", t2);
         commandChooser.addOption("Tag 3", t3);
@@ -127,19 +138,14 @@ public class RobotContainer {
         commandChooser.addOption("Tag 11", t11);
         commandChooser.addOption("Tag 12", t12);
 
+        autoType.setDefaultOption("Regular", regular);
+        autoType.addOption("Move Away", away);
+        autoType.addOption("Wait Before", wait);
     }
 
     private void setAutoTag(int tag) {
         System.out.println("PICKED TAG FOR AUTO: " + tag);
         this.SELECTED_AUTO_TAG = tag;
-    }
-
-    void runSelectedCommand(boolean run) {
-        if (run) {
-            commandChooser.getSelected().schedule();
-        } else {
-            commandChooser.getSelected().cancel();
-        }
     }
 
     /**
@@ -217,8 +223,8 @@ public class RobotContainer {
         tab.add(m_DrivetrainSubsystem.getField()).withPosition(2, 1).withSize(5, 3);
 
         // Modes
-        tab.addBoolean("Slow Mode", () -> isSlow()).withPosition(2, 0).withSize(2, 1);
-        tab.addBoolean("Roll Mode", () -> isRoll()).withPosition(5, 0).withSize(2, 1);
+        tab.addBoolean("Slow Mode", () -> isSlow()).withPosition(2, 0).withSize(1, 1);
+        tab.addBoolean("Roll Mode", () -> isRoll()).withPosition(4, 0).withSize(1, 1);
 
         // Robot (Reverse order for list layout)
         pos.addDouble("Robot R", () -> m_DrivetrainSubsystem.getState().Pose.getRotation().getDegrees()).withPosition(0,
@@ -241,7 +247,10 @@ public class RobotContainer {
         tab.addString("Vac 2 Status", () -> m_VacuumSubsystem2.getState()).withPosition(7, 2).withSize(1, 1);
         tab.addString("Vac 3 Status", () -> m_VacuumSubsystem3.getState()).withPosition(7, 3).withSize(1, 1);
 
-        tab.add("Auto Tag", commandChooser).withPosition(4, 0).withSize(1, 1);
+        // Auto
+        tab.add("Auto Tag", commandChooser).withPosition(3, 0).withSize(1, 1);
+        tab.add("Auto Type", autoType).withPosition(5, 0).withSize(2, 1);
+
     }
 
     /**
@@ -267,13 +276,13 @@ public class RobotContainer {
         // SELECTED_AUTO_TAG);
         // }));
 
-        m_driveController.b().onTrue(
-                m_VisionSubsystem.runOnce(() -> {
-                    System.out.println("started finder case");
-                    m_VisionSubsystem.approachDynamically(m_DrivetrainSubsystem,
-                            7,
-                            m_VacuumMaster, m_ArmSubsystem);
-                }));
+        // m_driveController.b().onTrue(
+        // m_VisionSubsystem.runOnce(() -> {
+        // System.out.println("started finder case");
+        // m_VisionSubsystem.approachDynamically(m_DrivetrainSubsystem,
+        // 7,
+        // m_VacuumMaster, m_ArmSubsystem);
+        // }));
 
         // m_driveController.y().onTrue(
         // m_VisionSubsystem.runOnce(() -> {
@@ -395,15 +404,6 @@ public class RobotContainer {
     }
 
     /**
-     * Accessor to the Autonomous Chooser
-     * 
-     * @return The Autonomous Chooser
-     */
-    public AutonomousChooser getAutonomousChooser() {
-        return autonomousChooser;
-    }
-
-    /**
      * Accessor to the DriveTrain Subsystem
      * 
      * @return The DriveTrain Subsystem
@@ -414,6 +414,10 @@ public class RobotContainer {
 
     public ArmSubsystem getArmSubsystem() {
         return m_ArmSubsystem;
+    }
+
+    public VacuumMaster getVacuumMaster() {
+        return m_VacuumMaster;
     }
 
     public void alignPigeonVision() {
@@ -429,8 +433,16 @@ public class RobotContainer {
             tagToNav = Integer.parseInt(sel.getName());
         } catch (Exception e) {
         }
+        Command type = autoType.getSelected();
+        boolean waitAction = false;
+        boolean awayAction = false;
+        if (type.getName().equals("away")) {
+            awayAction = true;
+        } else if (type.getName().equals("wait")) {
+            waitAction = true;
+        }
         m_VisionSubsystem.approachDynamically(m_DrivetrainSubsystem,
                 tagToNav,
-                m_VacuumMaster, m_ArmSubsystem);
+                m_VacuumMaster, m_ArmSubsystem, awayAction, waitAction);
     }
 }

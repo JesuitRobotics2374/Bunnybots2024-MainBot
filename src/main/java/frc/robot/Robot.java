@@ -87,6 +87,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
-
+        m_robotContainer.getVacuumMaster().stop();
     }
 }

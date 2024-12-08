@@ -64,7 +64,7 @@ public class BackUntilCanSeeTag extends Command {
         // Get the current robot position in meters
 
         drivetrain.setControl(
-                new SwerveRequest.RobotCentric().withVelocityX(-0.4));
+                new SwerveRequest.RobotCentric().withVelocityX(-1));
 
         // return !visionSubsystem.canSeeTag(tag_id);
 
