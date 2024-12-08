@@ -19,7 +19,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         // drivetrain
-        enableLiveWindowInTest(true);
+        enableLiveWindowInTest(false);
         addPeriodic(() -> {
             var ally = DriverStation.getAlliance();
             if (ally.isPresent()) {
@@ -80,7 +80,6 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
 
-        System.out.println("ran robot.java listener");
         m_robotContainer.runAutonomousCommand();
 
     }

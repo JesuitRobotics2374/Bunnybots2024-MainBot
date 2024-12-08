@@ -10,21 +10,18 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
 
 public class ArmSubsystem extends SubsystemBase {
     ProfiledPIDController armController = new ProfiledPIDController(Constants.ARM_PID_P, Constants.ARM_PID_I,
-            Constants.ARM_PID_D, new Constraints(1.8, 1.9));
+            Constants.ARM_PID_D, new Constraints(Constants.ARM_PID_MAX_VELOCITY, Constants.ARM_PID_MAX_ACCEL));
     TalonFX leftMotor = new TalonFX(Constants.LEFT_ARM_MOTOR_ID);
     TalonFX rightMotor = new TalonFX(Constants.RIGHT_ARM_MOTOR_ID);
     CANcoder encoder = new CANcoder(Constants.ARM_ENCODER_ID, Constants.CAN_BUS_NAME_CANIVORE);
     double goal;
     double speed;
-    double manualOffset = 4;
+    double manualOffset = Constants.ARM_BASE_OFFSET;
 
     static ArmSubsystem instance;
 
@@ -36,9 +33,9 @@ public class ArmSubsystem extends SubsystemBase {
         rightMotor.setControl(new Follower(Constants.LEFT_ARM_MOTOR_ID, true));
         encoder.getConfigurator()
                 .apply(new MagnetSensorConfigs().withAbsoluteSensorRange(AbsoluteSensorRangeValue.Signed_PlusMinusHalf)
-                        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive).withMagnetOffset(.094));
-        armController.enableContinuousInput(-.5, .5);
-        armController.setTolerance(0.02, 0.02);
+                        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive).withMagnetOffset(Constants.ENCODER_MAGNETIC_OFFSET));
+        armController.enableContinuousInput(Constants.ARM_CONTINUOUS_MIN, Constants.ARM_CONTINUOUS_MAX);
+        armController.setTolerance(Constants.ARM_POSITION_TOLERANCE, Constants.ARM_VELOCITY_TOLERANCE);
         goal = encoder.getAbsolutePosition().getValueAsDouble();
         armController.setGoal(goal);
     }
@@ -54,7 +51,7 @@ public class ArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         speed = Math.min(Math.max(
-                armController.calculate(encoder.getAbsolutePosition().getValueAsDouble()), -.30), .30);
+                armController.calculate(encoder.getAbsolutePosition().getValueAsDouble()), Constants.ARM_PERIODIC_MIN), Constants.ARM_PERIODIC_MAX);
 
         // the 12 represents 12 volts
         leftMotor.setVoltage(speed * 12 + Constants.FEED_FORWARD_VOLTAGE
@@ -82,7 +79,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void raise() {
         if (goal > Constants.BACKWARD_SOFT_STOP) {
-            goal -= .01;
+            goal -= 0.01;
             armController.setGoal(goal);
         }
     }
@@ -94,11 +91,11 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void increaseOffset() {
-        manualOffset -= 0.5;
+        manualOffset -= Constants.ARM_BASE_DELTA;
     }
 
     public void decreaseOffset() {
-        manualOffset += 0.5;
+        manualOffset += Constants.ARM_BASE_DELTA;
     }
 
     public static ArmSubsystem getInstance() {

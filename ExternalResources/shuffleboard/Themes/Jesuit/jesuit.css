@@ -12,13 +12,13 @@
  ******************************************************************************/
 .root {
     -fx-text-base-color: #fefefe;
-    /* Swatch Colors - Red */
+    /* Swatch Colors - Green */
 
-    -swatch-100: hsb(120, 80%, 98%);
-    -swatch-200: hsb(120, 80%, 88%);
-    -swatch-300: hsb(120, 80%, 78%);
-    -swatch-400: hsb(120, 80%, 68%);
-    -swatch-500: hsb(120, 80%, 58%);
+    -swatch-100: hsb(152, 100%, 53%);
+    -swatch-200: hsb(152, 100%, 53%);
+    -swatch-300: hsb(152, 100%, 53%);
+    -swatch-400: hsb(152, 100%, 53%);
+    -swatch-500: hsb(44, 40%, 64%);   /* Gold */
 
     -swatch-dark-gray: #222;
     -swatch-gray: #333;
@@ -245,7 +245,7 @@
 
 .tile:selected {
     -fx-background-color: #101010;
-    -fx-effect: dropshadow(gaussian, derive(yellow, -25%), 8, 0.00005, 0, 4);
+    -fx-effect: dropshadow(gaussian, derive(rgb(255, 255, 255), -25%), 8, 0.00005, 0, 4);
 }
 
 .tile:selected .tile-title-bar {

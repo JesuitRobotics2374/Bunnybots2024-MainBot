@@ -5,90 +5,26 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
+import frc.robot.Constants;
 import frc.robot.commands.ApproachTagAuto;
-import frc.robot.commands.auto.DriveAndSeek;
-import frc.robot.commands.auto.DriveDynamic;
-import frc.robot.commands.auto.DriveDynamicY;
-import frc.robot.commands.auto.OriginToStatic;
 
 import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
+import frc.robot.utils.DistanceAndAngle;
+import frc.robot.utils.LimelightHelpers;
 
 public class VisionSubsystem extends SubsystemBase {
 
-    private static VisionSubsystem instance;
-    // ShuffleboardTab tab = Shuffleboard.getTab(Constants.DRIVER_READOUT_TAB_NAME);
-
-    private int offset = 5000;
-
-    DriveDynamic driveDynamic;
-
-    /** Creates a new VisionSubsystem. */
     public VisionSubsystem() {
-
-        instance = this;
 
         LimelightHelpers.setLEDMode_PipelineControl("");
         LimelightHelpers.setLEDMode_ForceBlink("");
 
     }
 
-    public class DistanceAndAngle {
-        private final double distance;
-        private final double theta;
-
-        public DistanceAndAngle(double distance, double theta) {
-
-            this.distance = distance;
-            this.theta = theta;
-        }
-
-        public double getDistance() {
-            return distance;
-        }
-
-        public double getTheta() {
-            return theta;
-        }
-
-        public double getDistanceMeters() {
-            return distance / 39.37;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("Distance: %.2f inches, Angle: %.2f degrees", distance, theta);
-        }
-    }
-
     public boolean canSeeTag(int tag_id) {
         int detectedTagId = (int) LimelightHelpers.getFiducialID("");
         return (detectedTagId == tag_id);
-    }
-
-    public DistanceAndAngle getTagDistanceAndAngle(int tag_id) {
-
-        int detectedTagId = (int) LimelightHelpers.getFiducialID("");
-        if (detectedTagId == tag_id) {
-
-            double tagHeight = LimelightHelpers.getT2DArray("")[15];
-            double tagWidth = LimelightHelpers.getT2DArray("")[14];
-
-            double tx = LimelightHelpers.getTX(""); // Horizontal angle offset
-            System.out.println("TX: " + tx);
-            // double xRot = Math.acos(tagWidth / tagHeight);
-            // System.out.println("calc xrot: " + xRot * (180 / Math.PI));
-
-            // double ta = LimelightHelpers.getTA(""); // Tag screen coverage
-
-            double distance = offset / tagHeight; // inches
-
-            return new DistanceAndAngle(distance, tx);
-        }
-
-        return new DistanceAndAngle(-1.0, -1.0);
     }
 
     public Pose3d getTagPose3d(int tag_id) {
@@ -99,80 +35,36 @@ public class VisionSubsystem extends SubsystemBase {
         return null;
     }
 
-    public void raiseOffset() {
-        offset += 5;
-        System.out.println(offset);
+    public DistanceAndAngle getTagDistanceAndAngle(int tag_id) {
+
+        int detectedTagId = (int) LimelightHelpers.getFiducialID("");
+        if (detectedTagId == tag_id) {
+
+            double tagHeight = LimelightHelpers.getT2DArray("")[15];
+
+            double tx = LimelightHelpers.getTX("");
+            System.out.println("TX: " + tx);
+
+            double distance = Constants.LIMELIGHT_FOV_MMPP / tagHeight; // inches
+
+            return new DistanceAndAngle(distance, tx);
+        }
+
+        return new DistanceAndAngle(-1.0, -1.0);
     }
 
-    public void lowerOffset() {
-        offset -= 5;
-        System.out.println(offset);
-    }
-
-    public void approachDynamically(CommandSwerveDrivetrain ds, int tag_id, VacuumMaster vac, ArmSubsystem arm,
+    public void approachDynamically(CommandSwerveDrivetrain drivetrain, int tag_id, VacuumMaster vacuum, ArmSubsystem arm,
             boolean away, boolean wait) {
         if (tag_id == -1) {
             System.out.println("----------- UNSET AUTO! SKIPPING -----------");
             return;
         }
-        ApproachTagAuto a = new ApproachTagAuto(ds, instance, tag_id, vac, arm, away, wait);
+        ApproachTagAuto a = new ApproachTagAuto(drivetrain, this, tag_id, vacuum, arm, away, wait);
         a.schedule();
-    }
-
-    public void driveDynamically(CommandSwerveDrivetrain ds, int tag_id) {
-        DistanceAndAngle d = getTagDistanceAndAngle(tag_id);
-        if (d.getDistance() != -1.0 && d.getTheta() != -1.0 && d != null) {
-            DriveDynamic drive = new DriveDynamic(ds, this, tag_id, 1.4, 0);
-            drive.schedule();
-        }
-    }
-
-    public void driveAndSeek(CommandSwerveDrivetrain ds, int tag_id) {
-        DistanceAndAngle d = getTagDistanceAndAngle(tag_id);
-        DriveAndSeek drive = new DriveAndSeek(ds, this, tag_id);
-        drive.schedule();
-    }
-
-    public void doStaticAlign(CommandSwerveDrivetrain ds, int tag_id) {
-        // DistanceAndAngle d = getTagDistanceAndAngle(tag_id);
-        OriginToStatic drive = new OriginToStatic(ds, this, tag_id);
-        drive.schedule();
-    }
-
-    public void panDynamically(CommandSwerveDrivetrain ds, int tag_id) {
-        DistanceAndAngle d = getTagDistanceAndAngle(tag_id);
-        if (d.getDistance() != -1.0 && d.getTheta() != -1.0 && d != null) {
-            DriveDynamicY drive = new DriveDynamicY(ds, this, tag_id, 1, 0.15);
-            drive.schedule();
-        }
-    }
-
-    public void grabMisc(int tag_id) {
-        int detectedTagId = (int) LimelightHelpers.getFiducialID("");
-        if (detectedTagId == tag_id) {
-
-            double tagHeight = LimelightHelpers.getT2DArray("")[15];
-            double tagWidth = LimelightHelpers.getT2DArray("")[14];
-            DistanceAndAngle d = getTagDistanceAndAngle(tag_id);
-
-            double f = (Math.PI / 2) - d.getTheta() - Math.acos(tagWidth / tagHeight);
-
-            System.out.println("resultant: " + f);
-        }
     }
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
     }
 
-    public void driveStatic(CommandSwerveDrivetrain m_DrivetrainSubsystem, int testTargetTag) {
-        // DriveDynamic drive = new DriveDynamic(m_DrivetrainSubsystem, 0.2);
-        // driveDynamic = drive;
-        // drive.schedule();
-    }
-
-    public DriveDynamic getDriveDynamic() {
-        return driveDynamic;
-    }
 }

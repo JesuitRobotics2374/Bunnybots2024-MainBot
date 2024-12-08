@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.auto.BackUntilCanSeeTag;
 import frc.robot.commands.auto.DriveAndSeek;
-import frc.robot.commands.auto.DriveDynamic;
+import frc.robot.commands.auto.DriveDynamicX;
 import frc.robot.commands.auto.DriveDynamicY;
 import frc.robot.commands.auto.OriginToStatic;
 import frc.robot.commands.auto.ToteToAway;
@@ -21,25 +21,23 @@ public class ApproachTagAuto extends InstantCommand {
     public ApproachTagAuto(CommandSwerveDrivetrain drivetrain, VisionSubsystem visionSubsystem, int tag_id,
             VacuumMaster vac, ArmSubsystem arm, boolean away, boolean wait) {
 
-        // DistanceAndAngle d = visionSubsystem.getTagDistanceAndAngle(tag_id);
-
         Command startTimer = new WaitCommand(5);
         Command intake = new InstantCommand(() -> {
             vac.intakeFull();
         });
-        Command blind = new BackUntilCanSeeTag(drivetrain, visionSubsystem);
+        Command blind = new BackUntilCanSeeTag(drivetrain);
         Command align = new InstantCommand(() -> {
             drivetrain.alignToVision();
         });
         Command staticNav = new OriginToStatic(drivetrain, visionSubsystem, tag_id);
         Command seek = new DriveAndSeek(drivetrain, visionSubsystem, tag_id);
         Command squareUp = new DriveDynamicY(drivetrain, visionSubsystem, tag_id, 1, 0.15);
-        Command drive = new DriveDynamic(drivetrain, visionSubsystem, tag_id, 1.4, 1.5);
+        Command drive = new DriveDynamicX(drivetrain, visionSubsystem, tag_id, 1.4, 1.5);
         Command squareUpClose = new DriveDynamicY(drivetrain, visionSubsystem, tag_id, 0.3, 0.01);
         Command lower = new InstantCommand(() -> {
             arm.setGoal(-0.12 * 360); // Adjust
         });
-        Command driveClose = new DriveDynamic(drivetrain, visionSubsystem, tag_id, 0.7, 0.3);
+        Command driveClose = new DriveDynamicX(drivetrain, visionSubsystem, tag_id, 0.7, 0.3);
         Command outtake = new InstantCommand(() -> {
             vac.outtake();
         });
@@ -48,7 +46,7 @@ public class ApproachTagAuto extends InstantCommand {
             vac.stop();
         });
         Command leaveTimer = new WaitCommand(1.5);
-        Command staticLeave = new ToteToAway(drivetrain, visionSubsystem, tag_id);
+        Command staticLeave = new ToteToAway(drivetrain, tag_id);
 
         SequentialCommandGroup approach;
 

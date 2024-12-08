@@ -22,7 +22,9 @@ public class Constants {
     public static final double ROBOT_MAX_SPEED = 6.0;
     public static final double ROBOT_MAX_ROTATIONAL_RATE = 1.5 * Math.PI;
 
-    // ARM Subsystem
+    // Arm Subsystem
+
+    public static final double ARM_MOVEMENT_DELTA = 0.01;
 
     public static final int RIGHT_ARM_MOTOR_ID = 6;
     public static final int LEFT_ARM_MOTOR_ID = 7;
@@ -30,10 +32,23 @@ public class Constants {
     public static final double FORWARD_SOFT_STOP = 0.15;
     public static final double BACKWARD_SOFT_STOP = -0.255;
     public static final double FEED_FORWARD_VOLTAGE = 0.3;
+    public static final double ENCODER_MAGNETIC_OFFSET = 0.094;
+
+    public static final double ARM_CONTINUOUS_MIN = -0.5;
+    public static final double ARM_CONTINUOUS_MAX = 0.5;
+    public static final double ARM_POSITION_TOLERANCE = 0.2;
+    public static final double ARM_VELOCITY_TOLERANCE = 0.2;
+    public static final double ARM_PERIODIC_MIN = -0.3;
+    public static final double ARM_PERIODIC_MAX = 0.3;
 
     public static final double ARM_PID_P = 4.0;
     public static final double ARM_PID_I = 0.25;
     public static final double ARM_PID_D = 0.0;
+    public static final double ARM_PID_MAX_VELOCITY = 1.8;
+    public static final double ARM_PID_MAX_ACCEL = 1.9;
+
+    public static final double ARM_BASE_OFFSET = 4;
+    public static final double ARM_BASE_DELTA = 0.5;
 
     // Auto Static Groups
 
@@ -63,10 +78,36 @@ public class Constants {
 
     public static final int[] NEARBY_MEMBERS = { 3, 4, 9, 10 };
 
+    // Auto Routine Configs
+
+    public static final double GENERIC_DISTANCE_THRESHOLD = 0.3;
+    public static final double GENERIC_ROTATION_THRESHOLD = 1; // Degrees
+
+    public static final double BACKUP_MOVE_SPEED = -1;
+    public static final double BACKUP_CENTER_X = 9.0;
+    public static final double BACKUP_CENTER_Y = 4.2;
+
+    public static final double SEEK_MOVE_SPEED = 1.6;
+
+    public static final double ALIGN_MOVE_SPEED = 0.75;
+    public static final double ALIGN_ROTATE_SPEED = 0.025;
+    public static final double ALIGN_ROTATIONAL_FEED_FORWARD = 0.8;
+
+    public static final double AWAY_MOVE_SPEED = 1.75;
+
+
     // Vacuum Subsystem
 
     public static final int VAC_1_ID = 54;
     public static final int VAC_2_ID = 55;
     public static final int VAC_3_ID = 56;
+
+    public static final double VACUUM_INTAKE_FULL = 1;
+    public static final double VACUUM_INTAKE_PARTIAL = 0.5;
+    public static final double VACUUM_OUTTAKE = -0.5;
+
+    // Vision Subsystem
+
+    public static final int LIMELIGHT_FOV_MMPP = 5000;
 
 }
