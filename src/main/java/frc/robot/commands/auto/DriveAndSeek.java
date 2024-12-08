@@ -76,7 +76,11 @@ public class DriveAndSeek extends Command {
         done = false;
 
         if (contains(Constants.B_GROUP_MEMBERS, tag_id) || contains(Constants.D_GROUP_MEMBERS, tag_id)) {
-            quadrantSign = -1;
+            quadrantSign *= -1;
+        }
+
+        if (contains(Constants.NEARBY_MEMBERS, tag_id)) {
+            quadrantSign *= -1;
         }
     }
 

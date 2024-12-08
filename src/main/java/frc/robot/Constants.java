@@ -40,26 +40,28 @@ public class Constants {
     public static final double ALL_GROUPS_ROTATION = -90;
 
     public static final int[] A_GROUP_MEMBERS = { 1, 2, 3 };
-    public static final double A_GROUP_X = 9.916;
-    public static final double A_GROUP_Y = 1.613;
+    public static final double A_GROUP_X = 11.365;
+    public static final double A_GROUP_Y = 2.031;
 
     public static final int[] B_GROUP_MEMBERS = { 4, 5, 6 };
-    public static final double B_GROUP_X = 6.703;
-    public static final double B_GROUP_Y = 1.613;
+    public static final double B_GROUP_X = 4.989;
+    public static final double B_GROUP_Y = 2.031;
 
     public static final int[] C_GROUP_MEMBERS = { 7, 8, 9 };
-    public static final double C_GROUP_X = 6.703;
-    public static final double C_GROUP_Y = 5.853;
+    public static final double C_GROUP_X = 4.989;
+    public static final double C_GROUP_Y = 5.903;
 
     public static final int[] D_GROUP_MEMBERS = { 10, 11, 12 };
-    public static final double D_GROUP_X = 9.916;
-    public static final double D_GROUP_Y = 5.853;
+    public static final double D_GROUP_X = 11.365;
+    public static final double D_GROUP_Y = 5.903;
 
     public static final double BLUE_AWAY_X = 1.352;
     public static final double BLUE_AWAY_Y = 4.135;
 
     public static final double RED_AWAY_X = 14.742;
     public static final double RED_AWAY_Y = 4.135;
+
+    public static final int[] NEARBY_MEMBERS = { 3, 4, 9, 10 };
 
     // Vacuum Subsystem
 
