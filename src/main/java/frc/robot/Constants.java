@@ -95,7 +95,6 @@ public class Constants {
 
     public static final double AWAY_MOVE_SPEED = 1.75;
 
-
     // Vacuum Subsystem
 
     public static final int VAC_1_ID = 54;

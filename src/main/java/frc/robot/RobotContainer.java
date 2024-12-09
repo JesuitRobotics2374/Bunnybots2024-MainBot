@@ -67,8 +67,8 @@ public class RobotContainer {
         m_VisionSubsystem = new VisionSubsystem();
 
         configureShuffleBoard();
-        // resetDrive();
-        // configureButtonBindings();
+        resetDrive();
+        configureButtonBindings();
 
     }
 
@@ -115,51 +115,42 @@ public class RobotContainer {
         tab.add(httpCamera).withPosition(7, 0).withSize(3, 2);
 
         // New List Layout
-        ShuffleboardContainer pos = tab.getLayout("Position", "List Layout").withPosition(0, 0).withSize(1, 2);
+        ShuffleboardContainer pos = tab.getLayout("Position", "List Layout").withPosition(0, 0).withSize(2, 3);
+        ShuffleboardContainer vacs = tab.getLayout("Vacuums", "List Layout").withPosition(7, 2).withSize(1, 2);
 
         // Field
         tab.add(m_DrivetrainSubsystem.getField()).withPosition(2, 1).withSize(5, 3);
 
         // Modes
         tab.addBoolean("Slow Mode", () -> isSlow()).withPosition(2, 0).withSize(1, 1);
-        tab.addBoolean("Roll Mode", () -> isRoll()).withPosition(4, 0).withSize(1, 1);
+        tab.addBoolean("Roll Mode", () -> isRoll()).withPosition(3, 0).withSize(1, 1);
 
         // Robot (Reverse order for list layout)
-        // pos.addDouble("Robot R", () ->
-        // m_DrivetrainSubsystem.getState().Pose.getRotation().getDegrees()).withPosition(0,
-        // 2);
-        // pos.addDouble("Robot Y", () ->
-        // m_DrivetrainSubsystem.getState().Pose.getY()).withPosition(0, 1);
-        // pos.addDouble("Robot X", () ->
-        // m_DrivetrainSubsystem.getState().Pose.getX()).withPosition(0, 0);
+        pos.addDouble("Robot R", () -> m_DrivetrainSubsystem.getState().Pose.getRotation().getDegrees())
+                .withWidget("Gyro");
+        ;
+        pos.addDouble("Robot Y", () -> m_DrivetrainSubsystem.getState().Pose.getY());
+        pos.addDouble("Robot X", () -> m_DrivetrainSubsystem.getState().Pose.getX());
 
-        // tab.addDouble("Speed", () ->
-        // m_DrivetrainSubsystem.getRobotOverallVelocity()).withPosition(0,
-        // 2).withSize(2, 2)
-        // .withWidget("Simple Dial");
-
-        pos.addDouble("Robot X", () -> dummyDouble());
-        pos.addDouble("Robot Y", () -> dummyDouble());
-        pos.addDouble("Robot R", () -> dummyDouble());
-
-        tab.addDouble("Speed", () -> dummyDouble()).withPosition(0, 2).withSize(2, 2)
+        tab.addDouble("Speed", () -> m_DrivetrainSubsystem.getRobotOverallVelocity()).withPosition(8,
+                2).withSize(2, 2)
                 .withWidget("Simple Dial");
 
         // Arm
-        tab.addDouble("Arm Goal", () -> m_ArmSubsystem.getController().getSetpoint().position).withPosition(1, 0)
+        tab.addDouble("Arm Goal", () -> m_ArmSubsystem.getController().getSetpoint().position).withPosition(0, 3)
                 .withSize(1, 1);
         tab.addDouble("Arm Actual", () -> m_ArmSubsystem.getEncoder().getAbsolutePosition().getValueAsDouble())
-                .withPosition(1, 1).withSize(1, 1);
+                .withPosition(1, 3).withSize(1, 1);
 
         // Vac
-        tab.addString("Active Vacuum", () -> m_VacuumMaster.getTargetVacAsString()).withPosition(7, 2).withSize(3, 1);
-        tab.addString("Green Status", () -> m_VacuumSubsystem1.getState()).withPosition(7, 3).withSize(1, 1);
-        tab.addString("White Status", () -> m_VacuumSubsystem2.getState()).withPosition(8, 3).withSize(1, 1);
-        tab.addString("Black Status", () -> m_VacuumSubsystem3.getState()).withPosition(9, 3).withSize(1, 1);
+        tab.addString("Active Vacuum", () -> m_VacuumMaster.getTargetVacAsString()).withPosition(6, 0).withSize(1, 1);
+        vacs.addString("Green Status", () -> m_VacuumSubsystem1.getState()).withPosition(7, 3).withSize(1, 1);
+        vacs.addString("White Status", () -> m_VacuumSubsystem2.getState()).withPosition(8, 3).withSize(1, 1);
+        vacs.addString("Black Status", () -> m_VacuumSubsystem3.getState()).withPosition(9, 3).withSize(1, 1);
 
         // Auto
-        tab.add("Auto Tag", autoTag.getDropdown()).withPosition(3, 0).withSize(1, 1);
-        tab.add("Auto Type", autoType.getDropdown()).withPosition(5, 0).withSize(2, 1);
+        tab.add("Auto Tag", autoTag.getDropdown()).withPosition(4, 0).withSize(1, 1);
+        tab.add("Auto Type", autoType.getDropdown()).withPosition(5, 0).withSize(1, 1);
 
     }
 

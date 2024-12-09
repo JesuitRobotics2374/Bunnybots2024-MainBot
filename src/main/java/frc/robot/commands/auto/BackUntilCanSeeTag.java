@@ -28,7 +28,8 @@ public class BackUntilCanSeeTag extends Command {
                 new SwerveRequest.RobotCentric().withVelocityX(Constants.BACKUP_MOVE_SPEED));
         double visionX = drivetrain.getField().getObject("Vision").getPose().getTranslation().getX();
         double visionY = drivetrain.getField().getObject("Vision").getPose().getTranslation().getY();
-        if (!(Math.round(visionX * 10.0) / 10.0 == Constants.BACKUP_CENTER_X && Math.round(visionY * 10.0) / 10.0 == Constants.BACKUP_CENTER_Y)) {
+        if (!(Math.round(visionX * 10.0) / 10.0 == Constants.BACKUP_CENTER_X
+                && Math.round(visionY * 10.0) / 10.0 == Constants.BACKUP_CENTER_Y)) {
             done = true;
         }
 

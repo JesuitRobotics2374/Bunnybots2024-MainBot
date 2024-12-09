@@ -94,7 +94,8 @@ public class OriginToStatic extends Command {
         if (!doneRotating) {
             double rotationError = static_r - currentRotation;
             double RESign = rotationError / Math.abs(rotationError);
-            rotationalRate = rotationError * Constants.ALIGN_ROTATE_SPEED + (RESign * Constants.ALIGN_ROTATIONAL_FEED_FORWARD);
+            rotationalRate = rotationError * Constants.ALIGN_ROTATE_SPEED
+                    + (RESign * Constants.ALIGN_ROTATIONAL_FEED_FORWARD);
         }
         if (!doneMoving) {
             drivetrain.setControl(

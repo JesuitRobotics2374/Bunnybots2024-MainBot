@@ -33,7 +33,8 @@ public class ArmSubsystem extends SubsystemBase {
         rightMotor.setControl(new Follower(Constants.LEFT_ARM_MOTOR_ID, true));
         encoder.getConfigurator()
                 .apply(new MagnetSensorConfigs().withAbsoluteSensorRange(AbsoluteSensorRangeValue.Signed_PlusMinusHalf)
-                        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive).withMagnetOffset(Constants.ENCODER_MAGNETIC_OFFSET));
+                        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+                        .withMagnetOffset(Constants.ENCODER_MAGNETIC_OFFSET));
         armController.enableContinuousInput(Constants.ARM_CONTINUOUS_MIN, Constants.ARM_CONTINUOUS_MAX);
         armController.setTolerance(Constants.ARM_POSITION_TOLERANCE, Constants.ARM_VELOCITY_TOLERANCE);
         goal = encoder.getAbsolutePosition().getValueAsDouble();
@@ -51,7 +52,8 @@ public class ArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         speed = Math.min(Math.max(
-                armController.calculate(encoder.getAbsolutePosition().getValueAsDouble()), Constants.ARM_PERIODIC_MIN), Constants.ARM_PERIODIC_MAX);
+                armController.calculate(encoder.getAbsolutePosition().getValueAsDouble()), Constants.ARM_PERIODIC_MIN),
+                Constants.ARM_PERIODIC_MAX);
 
         // the 12 represents 12 volts
         leftMotor.setVoltage(speed * 12 + Constants.FEED_FORWARD_VOLTAGE

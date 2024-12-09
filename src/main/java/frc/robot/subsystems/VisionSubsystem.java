@@ -53,7 +53,8 @@ public class VisionSubsystem extends SubsystemBase {
         return new DistanceAndAngle(-1.0, -1.0);
     }
 
-    public void approachDynamically(CommandSwerveDrivetrain drivetrain, int tag_id, VacuumMaster vacuum, ArmSubsystem arm,
+    public void approachDynamically(CommandSwerveDrivetrain drivetrain, int tag_id, VacuumMaster vacuum,
+            ArmSubsystem arm,
             boolean away, boolean wait) {
         if (tag_id == -1) {
             System.out.println("----------- UNSET AUTO! SKIPPING -----------");
