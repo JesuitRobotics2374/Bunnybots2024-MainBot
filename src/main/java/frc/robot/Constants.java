@@ -102,7 +102,7 @@ public class Constants {
     public static final int VAC_3_ID = 56;
 
     public static final double VACUUM_INTAKE_FULL = 1;
-    public static final double VACUUM_INTAKE_PARTIAL = 0.5;
+    public static final double VACUUM_INTAKE_PARTIAL = 0.65;
     public static final double VACUUM_OUTTAKE = -0.5;
 
     // Vision Subsystem

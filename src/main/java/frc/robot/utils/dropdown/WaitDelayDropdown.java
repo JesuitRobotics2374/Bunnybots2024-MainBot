@@ -1,16 +1,16 @@
-package frc.robot.utils;
+package frc.robot.utils.dropdown;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-public class TagDropdown {
+public class WaitDelayDropdown {
 
     private final SendableChooser<Command> commandChooser = new SendableChooser<>();
 
-    private Command t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12;
+    private Command t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
 
-    public TagDropdown() {
+    public WaitDelayDropdown() {
 
         t1 = new InstantCommand(() -> {
         });
@@ -42,25 +42,17 @@ public class TagDropdown {
         t10 = new InstantCommand(() -> {
         });
         t10.setName("10");
-        t11 = new InstantCommand(() -> {
-        });
-        t11.setName("11");
-        t12 = new InstantCommand(() -> {
-        });
-        t12.setName("12");
 
-        commandChooser.addOption("Tag 1", t1);
-        commandChooser.addOption("Tag 2", t2);
-        commandChooser.addOption("Tag 3", t3);
-        commandChooser.addOption("Tag 4", t4);
-        commandChooser.addOption("Tag 5", t5);
-        commandChooser.addOption("Tag 6", t6);
-        commandChooser.addOption("Tag 7", t7);
-        commandChooser.addOption("Tag 8", t8);
-        commandChooser.addOption("Tag 9", t9);
-        commandChooser.addOption("Tag 10", t10);
-        commandChooser.addOption("Tag 11", t11);
-        commandChooser.addOption("Tag 12", t12);
+        commandChooser.addOption("1 sec", t1);
+        commandChooser.addOption("2 sec", t2);
+        commandChooser.addOption("3 sec", t3);
+        commandChooser.addOption("4 sec", t4);
+        commandChooser.addOption("5 sec", t5);
+        commandChooser.addOption("6 sec", t6);
+        commandChooser.addOption("7 sec", t7);
+        commandChooser.addOption("8 sec", t8);
+        commandChooser.addOption("9 sec", t9);
+        commandChooser.addOption("10 sec", t10);
 
     }
 

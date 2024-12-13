@@ -15,17 +15,21 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
+import frc.robot.commands.ApproachTagAuto;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DrivetrainSubsystem.TunerConstants;
-import frc.robot.utils.TagDropdown;
-import frc.robot.utils.TypeDropdown;
+import frc.robot.utils.dropdown.MoveDelayDropdown;
+import frc.robot.utils.dropdown.TagDropdown;
+import frc.robot.utils.dropdown.TypeDropdown;
+import frc.robot.utils.dropdown.WaitDelayDropdown;
 
 public class RobotContainer {
 
     private final TagDropdown autoTag = new TagDropdown();
     private final TypeDropdown autoType = new TypeDropdown();
+    private final WaitDelayDropdown autoWait = new WaitDelayDropdown();
+    private final MoveDelayDropdown autoMove = new MoveDelayDropdown();
 
     private double MaxSpeed = Constants.ROBOT_MAX_SPEED;
     private double MaxAngularRate = Constants.ROBOT_MAX_ROTATIONAL_RATE;
@@ -38,6 +42,8 @@ public class RobotContainer {
     private final VacuumSubsystem m_VacuumSubsystem3;
     private final VisionSubsystem m_VisionSubsystem;
     private final ArmSubsystem m_ArmSubsystem;
+
+    private ApproachTagAuto autoCommand;
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -116,14 +122,13 @@ public class RobotContainer {
 
         // New List Layout
         ShuffleboardContainer pos = tab.getLayout("Position", "List Layout").withPosition(0, 0).withSize(2, 3);
-        ShuffleboardContainer vacs = tab.getLayout("Vacuums", "List Layout").withPosition(7, 2).withSize(1, 2);
 
         // Field
         tab.add(m_DrivetrainSubsystem.getField()).withPosition(2, 1).withSize(5, 3);
 
         // Modes
-        tab.addBoolean("Slow Mode", () -> isSlow()).withPosition(2, 0).withSize(1, 1);
-        tab.addBoolean("Roll Mode", () -> isRoll()).withPosition(3, 0).withSize(1, 1);
+        tab.addBoolean("Slow Mode", () -> isSlow()).withPosition(2, 0).withSize(2, 1);
+        tab.addBoolean("Roll Mode", () -> isRoll()).withPosition(5, 0).withSize(1, 1);
 
         // Robot (Reverse order for list layout)
         pos.addDouble("Robot R", () -> m_DrivetrainSubsystem.getState().Pose.getRotation().getDegrees())
@@ -132,25 +137,29 @@ public class RobotContainer {
         pos.addDouble("Robot Y", () -> m_DrivetrainSubsystem.getState().Pose.getY());
         pos.addDouble("Robot X", () -> m_DrivetrainSubsystem.getState().Pose.getX());
 
-        tab.addDouble("Speed", () -> m_DrivetrainSubsystem.getRobotOverallVelocity()).withPosition(8,
-                2).withSize(2, 2)
+        tab.addDouble("Speed", () -> m_DrivetrainSubsystem.getRobotOverallVelocity()).withPosition(4,
+                0).withSize(1, 1)
                 .withWidget("Simple Dial");
 
         // Arm
-        tab.addDouble("Arm Goal", () -> m_ArmSubsystem.getController().getSetpoint().position).withPosition(0, 3)
-                .withSize(1, 1);
-        tab.addDouble("Arm Actual", () -> m_ArmSubsystem.getEncoder().getAbsolutePosition().getValueAsDouble())
-                .withPosition(1, 3).withSize(1, 1);
+        // tab.addDouble("Arm Goal", () ->
+        // m_ArmSubsystem.getController().getSetpoint().position).withPosition(0, 3)
+        // .withSize(1, 1);
+        // tab.addDouble("Arm Actual", () ->
+        // m_ArmSubsystem.getEncoder().getAbsolutePosition().getValueAsDouble())
+        // .withPosition(1, 3).withSize(1, 1);
 
         // Vac
         tab.addString("Active Vacuum", () -> m_VacuumMaster.getTargetVacAsString()).withPosition(6, 0).withSize(1, 1);
-        vacs.addString("Green Status", () -> m_VacuumSubsystem1.getState()).withPosition(7, 3).withSize(1, 1);
-        vacs.addString("White Status", () -> m_VacuumSubsystem2.getState()).withPosition(8, 3).withSize(1, 1);
-        vacs.addString("Black Status", () -> m_VacuumSubsystem3.getState()).withPosition(9, 3).withSize(1, 1);
+        tab.addString("Green Status", () -> m_VacuumSubsystem1.getState()).withPosition(7, 2).withSize(1, 1);
+        tab.addString("White Status", () -> m_VacuumSubsystem2.getState()).withPosition(8, 2).withSize(1, 1);
+        tab.addString("Black Status", () -> m_VacuumSubsystem3.getState()).withPosition(9, 2).withSize(1, 1);
 
         // Auto
-        tab.add("Auto Tag", autoTag.getDropdown()).withPosition(4, 0).withSize(1, 1);
-        tab.add("Auto Type", autoType.getDropdown()).withPosition(5, 0).withSize(1, 1);
+        tab.add("Auto Tag", autoTag.getDropdown()).withPosition(7, 3).withSize(2, 1);
+        tab.add("Auto Type", autoType.getDropdown()).withPosition(9, 3).withSize(1, 1);
+        tab.add("Delay", autoWait.getDropdown()).withPosition(0, 3).withSize(1, 1);
+        tab.add("Dwell", autoMove.getDropdown()).withPosition(1, 3).withSize(1, 1);
 
     }
 
@@ -253,22 +262,44 @@ public class RobotContainer {
     }
 
     public void runAutonomousCommand() {
+
         Command sel = autoTag.getDropdown().getSelected();
         int tagToNav = -1;
         try {
             tagToNav = Integer.parseInt(sel.getName());
         } catch (Exception e) {
         }
+
+        Command waitTime = autoWait.getDropdown().getSelected();
+        int waitTimeInt = -1;
+        try {
+            waitTimeInt = Integer.parseInt(waitTime.getName());
+        } catch (Exception e) {
+        }
+
+        Command moveTime = autoMove.getDropdown().getSelected();
+        int moveTimeInt = -1;
+        try {
+            moveTimeInt = Integer.parseInt(moveTime.getName());
+        } catch (Exception e) {
+        }
+
         Command type = autoType.getDropdown().getSelected();
         boolean waitAction = false;
         boolean awayAction = false;
+
         if (type.getName().equals("away")) {
             awayAction = true;
         } else if (type.getName().equals("wait")) {
             waitAction = true;
+        } else if (type.getName().equals("both")) {
+            awayAction = true;
+            waitAction = true;
         }
-        m_VisionSubsystem.approachDynamically(m_DrivetrainSubsystem,
+
+        autoCommand = m_VisionSubsystem.approachDynamically(m_DrivetrainSubsystem,
                 tagToNav,
-                m_VacuumMaster, m_ArmSubsystem, awayAction, waitAction);
+                m_VacuumMaster, m_ArmSubsystem, awayAction, waitAction, waitTimeInt, moveTimeInt);
+
     }
 }

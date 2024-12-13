@@ -35,10 +35,10 @@ public class DriveDynamicX extends Command {
 
     @Override
     public void execute() {
-        if (!visionSubsystem.canSeeTag(tag_id)) {
-            done = true;
-            return;
-        }
+        // if (!visionSubsystem.canSeeTag(tag_id)) {
+        // done = true;
+        // return;
+        // }
         drivetrain.setControl(new SwerveRequest.RobotCentric().withVelocityX(speed));
         double z = visionSubsystem.getTagPose3d(tag_id).getZ();
         double x = visionSubsystem.getTagPose3d(tag_id).getX();

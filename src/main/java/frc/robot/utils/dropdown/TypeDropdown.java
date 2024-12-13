@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.robot.utils.dropdown;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -8,7 +8,7 @@ public class TypeDropdown {
 
     private final SendableChooser<Command> commandChooser = new SendableChooser<>();
 
-    private Command regular, away, wait;
+    private Command regular, away, wait, both;
 
     public TypeDropdown() {
 
@@ -20,11 +20,15 @@ public class TypeDropdown {
         away.setName("away");
         wait = new InstantCommand(() -> {
         });
-        wait.setName("wait");
+        wait.setName("both");
+        both = new InstantCommand(() -> {
+        });
+        both.setName("both");
 
         commandChooser.setDefaultOption("Regular", regular);
         commandChooser.addOption("Move Away", away);
         commandChooser.addOption("Wait Before", wait);
+        commandChooser.addOption("Both", both);
 
     }
 

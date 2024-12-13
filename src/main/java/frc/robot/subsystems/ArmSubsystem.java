@@ -73,7 +73,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void lower() {
         if (goal < Constants.FORWARD_SOFT_STOP) {
-            goal += 0.01;
+            goal += 0.02;
             armController.setGoal(goal);
         }
 
@@ -81,7 +81,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void raise() {
         if (goal > Constants.BACKWARD_SOFT_STOP) {
-            goal -= 0.01;
+            goal -= 0.02;
             armController.setGoal(goal);
         }
     }

@@ -15,6 +15,8 @@ import frc.robot.utils.LimelightHelpers;
 
 public class VisionSubsystem extends SubsystemBase {
 
+    ApproachTagAuto autoCommand;
+
     public VisionSubsystem() {
 
         LimelightHelpers.setLEDMode_PipelineControl("");
@@ -27,12 +29,24 @@ public class VisionSubsystem extends SubsystemBase {
         return (detectedTagId == tag_id);
     }
 
+    private Pose3d poseCache;
+    private int poseAge = 0;
+
     public Pose3d getTagPose3d(int tag_id) {
         int detectedTagId = (int) LimelightHelpers.getFiducialID("");
+        poseAge++;
         if (detectedTagId == tag_id) {
-            return LimelightHelpers.getTargetPose3d_CameraSpace("");
+            poseCache = LimelightHelpers.getTargetPose3d_CameraSpace("");
+            poseAge = 0;
+            return poseCache;
+        } else {
+            if (poseAge < 100) {
+                return poseCache;
+            }
+            // Safety
+            autoCommand.cancel();
+            return null;
         }
-        return null;
     }
 
     public DistanceAndAngle getTagDistanceAndAngle(int tag_id) {
@@ -53,15 +67,17 @@ public class VisionSubsystem extends SubsystemBase {
         return new DistanceAndAngle(-1.0, -1.0);
     }
 
-    public void approachDynamically(CommandSwerveDrivetrain drivetrain, int tag_id, VacuumMaster vacuum,
+    public ApproachTagAuto approachDynamically(CommandSwerveDrivetrain drivetrain, int tag_id, VacuumMaster vacuum,
             ArmSubsystem arm,
-            boolean away, boolean wait) {
+            boolean away, boolean wait, int waitTime, int moveTime) {
         if (tag_id == -1) {
             System.out.println("----------- UNSET AUTO! SKIPPING -----------");
-            return;
+            return null;
         }
-        ApproachTagAuto a = new ApproachTagAuto(drivetrain, this, tag_id, vacuum, arm, away, wait);
+        ApproachTagAuto a = new ApproachTagAuto(drivetrain, this, tag_id, vacuum, arm, away, wait, waitTime, moveTime);
         a.schedule();
+        this.autoCommand = a;
+        return a;
     }
 
     @Override
