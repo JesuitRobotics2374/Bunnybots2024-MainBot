@@ -158,8 +158,12 @@ public class RobotContainer {
         // Auto
         tab.add("Auto Tag", autoTag.getDropdown()).withPosition(7, 3).withSize(2, 1);
         tab.add("Auto Type", autoType.getDropdown()).withPosition(9, 3).withSize(1, 1);
-        tab.add("Delay", autoWait.getDropdown()).withPosition(0, 3).withSize(1, 1);
-        tab.add("Dwell", autoMove.getDropdown()).withPosition(1, 3).withSize(1, 1);
+//        tab.add("Delay", autoWait.getDropdown()).withPosition(0, 3).withSize(1, 1);
+//        tab.add("Dwell", autoMove.getDropdown()).withPosition(1, 3).withSize(1, 1);
+
+        // TEMP FOR DEBUG
+        tab.addDouble("Arm Actual", () -> m_ArmSubsystem.getEncoder().getAbsolutePosition().getValueAsDouble())
+                .withPosition(0, 3).withSize(1, 1);
 
     }
 
