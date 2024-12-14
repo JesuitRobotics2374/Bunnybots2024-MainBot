@@ -30,6 +30,9 @@ public class ApproachTagAuto extends InstantCommand {
         Command intake = new InstantCommand(() -> {
             vac.intakeFull();
         });
+        Command evenArm = new InstantCommand(() -> {
+            arm.setGoal(Constants.BACKWARD_SOFT_STOP);
+        });
         Command blind = new BackUntilCanSeeTag(drivetrain);
         Command align = new InstantCommand(() -> {
             drivetrain.alignToVision();
@@ -73,7 +76,7 @@ public class ApproachTagAuto extends InstantCommand {
                     seek,
                     squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop);
         }else if (three) {
-            approach = new SequentialCommandGroup(intake, fullLower, startTimer, blind, align, staticNav, seek,
+            approach = new SequentialCommandGroup(intake, fullLower, startTimer, evenArm, blind, align, staticNav, seek,
                     squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop);
         } else {
             approach = new SequentialCommandGroup(intake, blind, align, staticNav, seek,
