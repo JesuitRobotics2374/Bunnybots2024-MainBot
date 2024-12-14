@@ -158,12 +158,8 @@ public class RobotContainer {
         // Auto
         tab.add("Auto Tag", autoTag.getDropdown()).withPosition(7, 3).withSize(2, 1);
         tab.add("Auto Type", autoType.getDropdown()).withPosition(9, 3).withSize(1, 1);
-//        tab.add("Delay", autoWait.getDropdown()).withPosition(0, 3).withSize(1, 1);
-//        tab.add("Dwell", autoMove.getDropdown()).withPosition(1, 3).withSize(1, 1);
-
-        // TEMP FOR DEBUG
-        tab.addDouble("Arm Actual", () -> m_ArmSubsystem.getEncoder().getAbsolutePosition().getValueAsDouble())
-                .withPosition(0, 3).withSize(1, 1);
+        tab.add("Delay", autoWait.getDropdown()).withPosition(0, 3).withSize(1, 1);
+        tab.add("Dwell", autoMove.getDropdown()).withPosition(1, 3).withSize(1, 1);
 
     }
 
@@ -291,6 +287,7 @@ public class RobotContainer {
         Command type = autoType.getDropdown().getSelected();
         boolean waitAction = false;
         boolean awayAction = false;
+        boolean threeBunny = false;
 
         if (type.getName().equals("away")) {
             awayAction = true;
@@ -299,11 +296,13 @@ public class RobotContainer {
         } else if (type.getName().equals("both")) {
             awayAction = true;
             waitAction = true;
+        }  else if (type.getName().equals("3bunny")) {
+            threeBunny = true;
         }
 
         autoCommand = m_VisionSubsystem.approachDynamically(m_DrivetrainSubsystem,
                 tagToNav,
-                m_VacuumMaster, m_ArmSubsystem, awayAction, waitAction, waitTimeInt, moveTimeInt);
+                m_VacuumMaster, m_ArmSubsystem, awayAction, waitAction, threeBunny, waitTimeInt, moveTimeInt);
 
     }
 }

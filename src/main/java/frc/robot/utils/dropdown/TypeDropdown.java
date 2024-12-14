@@ -8,7 +8,7 @@ public class TypeDropdown {
 
     private final SendableChooser<Command> commandChooser = new SendableChooser<>();
 
-    private Command regular, away, wait, both;
+    private Command regular, away, wait, both, threeBunny;
 
     public TypeDropdown() {
 
@@ -24,11 +24,15 @@ public class TypeDropdown {
         both = new InstantCommand(() -> {
         });
         both.setName("both");
+        threeBunny = new InstantCommand(() -> {
+        });
+        threeBunny.setName("3bunny");
 
         commandChooser.setDefaultOption("Regular", regular);
         commandChooser.addOption("Move Away", away);
         commandChooser.addOption("Wait Before", wait);
         commandChooser.addOption("Both", both);
+        commandChooser.addOption("3 Bunny", threeBunny);
 
     }
 

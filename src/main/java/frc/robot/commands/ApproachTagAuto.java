@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants;
 import frc.robot.commands.auto.BackUntilCanSeeTag;
 import frc.robot.commands.auto.DriveAndSeek;
 import frc.robot.commands.auto.DriveDynamicX;
@@ -20,8 +21,11 @@ import frc.robot.subsystems.DrivetrainSubsystem.CommandSwerveDrivetrain;
 public class ApproachTagAuto extends InstantCommand {
 
     public ApproachTagAuto(CommandSwerveDrivetrain drivetrain, VisionSubsystem visionSubsystem, int tag_id,
-            VacuumMaster vac, ArmSubsystem arm, boolean away, boolean wait, int waitTime, int moveTime) {
+            VacuumMaster vac, ArmSubsystem arm, boolean away, boolean wait, boolean three, int waitTime, int moveTime) {
 
+        Command fullLower = new InstantCommand(() -> {
+            arm.setGoal(Constants.ACTION_FULL_LOWER_ANGLE); // Adjust
+        });
         Command startTimer = new WaitCommand(waitTime);
         Command intake = new InstantCommand(() -> {
             vac.intakeFull();
@@ -36,7 +40,7 @@ public class ApproachTagAuto extends InstantCommand {
         Command drive = new DriveDynamicX(drivetrain, visionSubsystem, tag_id, 1.4, 1.5);
         Command squareUpClose = new DriveDynamicY(drivetrain, visionSubsystem, tag_id, 0.3, 0.01);
         Command lower = new InstantCommand(() -> {
-            arm.setGoal(-0.12 * 360); // Adjust
+            arm.setGoal(Constants.ACTION_LOWER_ANGLE); // Adjust
         });
         Command driveClose = new DriveDynamicX(drivetrain, visionSubsystem, tag_id, 0.7, 0.3);
         Command outtake = new InstantCommand(() -> {
@@ -55,19 +59,22 @@ public class ApproachTagAuto extends InstantCommand {
 
         SequentialCommandGroup approach;
 
-        if (away) {
+        if (wait && away) {
+            approach = new SequentialCommandGroup(intake, startTimer, blind, align, staticNav,
+                    seek,
+                    squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop, leaveTimer, staticLeave,
+                    alignRobotPost, seedFieldRelative);
+        } else if (away) {
             approach = new SequentialCommandGroup(intake, blind, align, staticNav, seek,
                     squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop, leaveTimer, staticLeave,
                     alignRobotPost, seedFieldRelative);
         } else if (wait) {
-            approach = new SequentialCommandGroup(startTimer, intake, blind, align, staticNav,
+            approach = new SequentialCommandGroup(intake, startTimer, blind, align, staticNav,
                     seek,
                     squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop);
-        } else if (wait && away) {
-            approach = new SequentialCommandGroup(startTimer, intake, blind, align, staticNav,
-                    seek,
-                    squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop, leaveTimer, staticLeave,
-                    alignRobotPost, seedFieldRelative);
+        }else if (three) {
+            approach = new SequentialCommandGroup(intake, fullLower, startTimer, blind, align, staticNav, seek,
+                    squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop);
         } else {
             approach = new SequentialCommandGroup(intake, blind, align, staticNav, seek,
                     squareUp, drive, squareUpClose, lower, driveClose, outtake, timer, stop);

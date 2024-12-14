@@ -69,12 +69,12 @@ public class VisionSubsystem extends SubsystemBase {
 
     public ApproachTagAuto approachDynamically(CommandSwerveDrivetrain drivetrain, int tag_id, VacuumMaster vacuum,
             ArmSubsystem arm,
-            boolean away, boolean wait, int waitTime, int moveTime) {
+            boolean away, boolean wait, boolean three, int waitTime, int moveTime) {
         if (tag_id == -1) {
             System.out.println("----------- UNSET AUTO! SKIPPING -----------");
             return null;
         }
-        ApproachTagAuto a = new ApproachTagAuto(drivetrain, this, tag_id, vacuum, arm, away, wait, waitTime, moveTime);
+        ApproachTagAuto a = new ApproachTagAuto(drivetrain, this, tag_id, vacuum, arm, away, wait, three, waitTime, moveTime);
         a.schedule();
         this.autoCommand = a;
         return a;

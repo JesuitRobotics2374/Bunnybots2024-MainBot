@@ -80,6 +80,9 @@ public class Constants {
 
     // Auto Routine Configs
 
+    public static final double ACTION_FULL_LOWER_ANGLE = -0.0004882 * 360; // TESTING REQUIRED
+    public static final double ACTION_LOWER_ANGLE = -0.12 * 360;
+
     public static final double GENERIC_DISTANCE_THRESHOLD = 0.3;
     public static final double GENERIC_ROTATION_THRESHOLD = 1; // Degrees
 
